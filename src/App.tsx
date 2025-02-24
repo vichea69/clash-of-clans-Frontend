@@ -1,10 +1,14 @@
+import { ThemeProvider } from "./components/theme-provider";
 import AppRouter from "./routes/AppRouter";
 import { BrowserRouter } from "react-router";
+
 const App = () => {
   return (
-    <BrowserRouter>
-      <AppRouter />
-    </BrowserRouter>
+    <ThemeProvider defaultTheme="system" storageKey="app-theme">
+      <BrowserRouter>
+        <AppRouter />
+      </BrowserRouter>
+    </ThemeProvider>
   );
 };
 
