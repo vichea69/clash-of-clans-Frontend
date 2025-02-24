@@ -15,11 +15,9 @@ const Header = () => {
   const { setTheme } = useTheme();
 
   const navigation = [
-    { title: "Docs", path: "/docs" },
+    { title: "Base", path: "/base" },
     { title: "Tech Stack", path: "/tech-stack" },
-    { title: "Projects", path: "/projects" },
     { title: "About", path: "/about" },
-    { title: "Colors", path: "/colors" },
   ];
 
   return (
