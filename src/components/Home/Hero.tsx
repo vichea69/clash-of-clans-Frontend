@@ -11,14 +11,34 @@ const Hero = () => {
     <AuroraBackground>
       <div className="min-h-[80vh] flex flex-col items-center justify-center text-center px-4 relative z-10">
         {/* Logo */}
-        <div className="mb-6">
-          <h1 className="text-6xl font-bold bg-gradient-to-r from-blue-400 to-pink-300 bg-clip-text text-transparent">
-            Clash Of Clans
-          </h1>
+        <div className="mb-6 relative">
+          {/* Japanese Text */}
+          <span className="absolute -top-4 left-0 text-sm text-pink-300/80 font-medium tracking-wider">
+            ビチア デベロッパー
+          </span>
+
+          {/* Main Logo Text */}
+          <div className="relative inline-block">
+            <h1 className="text-6xl font-bold tracking-tight">
+              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Clash Of Clans
+              </span>
+              <span className="absolute -top-1 right-0 text-pink-400/80 text-2xl">
+                +
+              </span>
+              <span className="absolute -right-6 top-0 text-yellow-200/80 text-sm">
+                35
+              </span>
+            </h1>
+
+            {/* Logo Border/Background */}
+            
+          </div>
         </div>
 
         {/* Main Heading */}
-        <h2 className="text-4xl md:text-5xl font-bold text-blue-200 mb-4">
+        
+        <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent mb-4">
           Ergonomic Framework for Humans
         </h2>
 
@@ -42,7 +62,7 @@ const Hero = () => {
             <Button
               variant="secondary"
               size="lg"
-              className="bg-purple-900/50 text-purple-300 pr-12"
+              className="bg-purple-900/50 text-purple-300 pr-12 font-mono"
             >
               bun create elysia app
             </Button>

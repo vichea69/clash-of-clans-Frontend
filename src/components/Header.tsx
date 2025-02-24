@@ -16,10 +16,9 @@ const Header = () => {
 
   const navigation = [
     { title: "Docs", path: "/docs" },
-    { title: "Components", path: "/components" },
-    { title: "Blocks", path: "/blocks" },
-    { title: "Charts", path: "/charts" },
-    { title: "Themes", path: "/themes" },
+    { title: "Tech Stack", path: "/tech-stack" },
+    { title: "Projects", path: "/projects" },
+    { title: "About", path: "/about" },
     { title: "Colors", path: "/colors" },
   ];
 
@@ -39,7 +38,9 @@ const Header = () => {
                 strokeLinejoin="round"
               />
             </svg>
-            <span className="font-bold">vichea/dev</span>
+            <span className="font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              vichea/dev
+            </span>
           </Link>
         </div>
 
@@ -85,7 +86,7 @@ const Header = () => {
           {/* Desktop Only Items */}
           <div className="hidden md:flex items-center space-x-4">
             <Link
-              to="https://github.com/shadcn/ui"
+              to="https://github.com/vichea69"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 py-2 w-9 px-0"
@@ -141,7 +142,7 @@ const Header = () => {
               ))}
               <div className="flex flex-col space-y-3 pt-4 border-t border-border/40">
                 <Link
-                  to="https://github.com/shadcn/ui"
+                  to="https://github.com/vichea69"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center space-x-2 text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
