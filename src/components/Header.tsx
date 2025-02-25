@@ -15,18 +15,22 @@ const Header = () => {
   const { setTheme } = useTheme();
 
   const navigation = [
-    { title: "Base", path: "/base" },
-    { title: "Tech Stack", path: "/tech-stack" },
+    { title: "Home", path: "/" },
+    { title: "Base Layouts", path: "/base" },
+    { title: "Town Hall Levels", path: "/town-hall" },
     { title: "About", path: "/about" },
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:bg-background/80 dark:border-border/30">
       <div className="container flex h-14 max-w-screen-2xl items-center justify-between">
         {/* Logo Section - Visible on all screens */}
         <div className="flex items-center space-x-2">
           <Link to="/" className="flex items-center space-x-2">
-            <svg className="h-6 w-6" viewBox="0 0 24 24">
+            <svg
+              className="h-6 w-6 text-primary dark:text-primary/90"
+              viewBox="0 0 24 24"
+            >
               <path
                 d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
                 fill="none"
@@ -36,10 +40,13 @@ const Header = () => {
                 strokeLinejoin="round"
               />
             </svg>
-            <span className="font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              vichea/dev
+            <span className="font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 dark:from-blue-300 dark:via-purple-300 dark:to-pink-300 bg-clip-text text-transparent">
+              Clash Base Hub
             </span>
           </Link>
+          <span className="hidden sm:inline-block text-xs text-foreground/60 dark:text-foreground/70">
+            Free CoC Base Layouts
+          </span>
         </div>
 
         {/* Desktop Navigation */}
@@ -49,7 +56,7 @@ const Header = () => {
               <Link
                 key={idx}
                 to={item.path}
-                className="transition-colors hover:text-foreground/80 text-foreground/60"
+                className="transition-colors hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90"
               >
                 {item.title}
               </Link>
@@ -62,20 +69,36 @@ const Header = () => {
           {/* Dark Mode - Visible on all screens */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-9 w-9">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 dark:text-foreground/80 dark:hover:text-foreground dark:hover:bg-accent/50"
+              >
                 <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                 <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                 <span className="sr-only">Toggle theme</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setTheme("light")}>
+            <DropdownMenuContent
+              align="end"
+              className="dark:bg-background/95 dark:border-border/30"
+            >
+              <DropdownMenuItem
+                onClick={() => setTheme("light")}
+                className="dark:hover:bg-accent/40"
+              >
                 Light
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("dark")}>
+              <DropdownMenuItem
+                onClick={() => setTheme("dark")}
+                className="dark:hover:bg-accent/40"
+              >
                 Dark
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("system")}>
+              <DropdownMenuItem
+                onClick={() => setTheme("system")}
+                className="dark:hover:bg-accent/40"
+              >
                 System
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -87,24 +110,21 @@ const Header = () => {
               to="https://github.com/vichea69"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 py-2 w-9 px-0"
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 py-2 w-9 px-0 dark:hover:bg-accent/40 dark:text-foreground/80 dark:hover:text-foreground"
             >
               <Github className="h-5 w-5" />
               <span className="sr-only">GitHub</span>
             </Link>
 
-            <div className="flex items-center space-x-2">
-              <Link
-                to="/login"
-                className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2"
-              >
-                Log in
+            <div className="flex items-center gap-4">
+              <Link to="/login" className="text-sm font-medium">
+                Login
               </Link>
               <Link
-                to="/signup"
-                className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2"
+                to="/sign-up"
+                className="text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-md"
               >
-                Sign up
+                Sign Up
               </Link>
             </div>
           </div>
@@ -112,7 +132,7 @@ const Header = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring hover:bg-accent hover:text-accent-foreground h-9 py-2 w-9 px-0"
+            className="md:hidden inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring hover:bg-accent hover:text-accent-foreground h-9 py-2 w-9 px-0 dark:hover:bg-accent/40 dark:text-foreground/80 dark:hover:text-foreground"
           >
             {isMenuOpen ? (
               <X className="h-5 w-5" />
@@ -125,25 +145,25 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden border-t border-border/40">
+        <div className="md:hidden border-t border-border/40 dark:border-border/30 dark:bg-background/95">
           <div className="container py-4">
             <nav className="flex flex-col space-y-4">
               {navigation.map((item, idx) => (
                 <Link
                   key={idx}
                   to={item.path}
-                  className="text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
+                  className="text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.title}
                 </Link>
               ))}
-              <div className="flex flex-col space-y-3 pt-4 border-t border-border/40">
+              <div className="flex flex-col space-y-3 pt-4 border-t border-border/40 dark:border-border/30">
                 <Link
                   to="https://github.com/vichea69"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center space-x-2 text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
+                  className="inline-flex items-center space-x-2 text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90"
                 >
                   <Github className="h-5 w-5" />
                   <span>GitHub</span>
@@ -151,17 +171,17 @@ const Header = () => {
                 <div className="flex flex-col space-y-2 pt-4">
                   <Link
                     to="/login"
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2"
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 dark:hover:bg-accent/40 dark:text-foreground/90"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Log in
+                    Login
                   </Link>
                   <Link
-                    to="/signup"
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2"
+                    to="/sign-up"
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 dark:bg-primary/90 dark:hover:bg-primary"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Sign up
+                    Sign Up
                   </Link>
                 </div>
               </div>

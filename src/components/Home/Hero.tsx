@@ -26,27 +26,37 @@ const Hero = () => {
               <span className="absolute -top-1 right-0 text-pink-400/80 text-2xl">
                 +
               </span>
-              <span className="absolute -right-6 top-0 text-yellow-200/80 text-sm">
+              {/* <span className="absolute -right-6 top-0 text-yellow-200/80 text-sm">
                 35
-              </span>
+              </span> */}
             </h1>
 
             {/* Logo Border/Background */}
-            
           </div>
         </div>
 
         {/* Main Heading */}
-        
+
         <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent mb-4">
-          Ergonomic Framework for Humans
+          Ultimate Base Building Strategy Hub
         </h2>
 
         {/* Subheading */}
-        <p className="text-lg md:text-xl text-gray-400 max-w-2xl mb-8">
-          TypeScript with{" "}
-          <span className="text-purple-400">End-to-End Type Safety</span>, type
-          integrity, and exceptional developer experience. Supercharged by Bun.
+        <p className="text-lg md:text-xl text-gray-400/90 max-w-2xl mb-8 backdrop-blur-sm">
+          Find{" "}
+          <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-400 bg-clip-text text-transparent font-semibold">
+            proven strategies
+          </span>{" "}
+          and
+          <span className="text-cyan-300/90"> expert layouts</span> for your
+          Clash of Clans village. Dominate
+          <span className="text-amber-300/90 font-medium"> clan wars</span> with
+          our
+          <span className="bg-gradient-to-br from-red-400 to-orange-300 bg-clip-text text-transparent">
+            {" "}
+            battle-tested base designs
+          </span>
+          .
         </p>
 
         {/* CTA Buttons */}
@@ -64,7 +74,7 @@ const Hero = () => {
               size="lg"
               className="bg-purple-900/50 text-purple-300 pr-12 font-mono"
             >
-              bun create elysia app
+              Copy Link Now!
             </Button>
             <Button
               size="icon"
@@ -80,7 +90,7 @@ const Hero = () => {
         {/* Scroll Indicator */}
         <div className="absolute bottom-8">
           <p className="text-gray-400 text-sm">
-            See why developers love Elysia ↓
+            See why clash players love CHEA↓
           </p>
         </div>
       </div>

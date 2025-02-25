@@ -1,14 +1,18 @@
+
+import { BrowserRouter as Router, Routes, Route } from "react-router";
 import { ThemeProvider } from "./components/theme-provider";
 import AppRouter from "./routes/AppRouter";
-import { BrowserRouter } from "react-router";
+import "./App.css";
 
 const App = () => {
   return (
-    <ThemeProvider defaultTheme="system" storageKey="app-theme">
-      <BrowserRouter>
-        <AppRouter />
-      </BrowserRouter>
-    </ThemeProvider>
+    <Router>
+      <ThemeProvider defaultTheme="system" storageKey="app-theme">
+        <Routes>
+          <Route path="/*" element={<AppRouter />} />
+        </Routes>
+      </ThemeProvider>
+    </Router>
   );
 };
 
