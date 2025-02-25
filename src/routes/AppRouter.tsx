@@ -1,18 +1,79 @@
-import { Routes, Route } from "react-router";
+import { Routes, Route, Navigate } from "react-router";
+import { useAuth, SignIn, SignUp } from "@clerk/clerk-react";
 import MainLayout from "@/layouts/MainLayout";
+
+// Import components directly
 import Home from "@/page/Home";
 import About from "@/page/About";
 import Base from "@/components/Base";
 import NotFound from "@/page/NotFound";
+import BaseUpload from "@/page/base/BaseUpload";
+import Page from "@/app/dashboard/page";
+
+// Loading component for fallback
+const LoadingSpinner = () => <div>Loading...</div>;
+
+// Protected route component
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isSignedIn, isLoaded } = useAuth();
+
+  if (!isLoaded) {
+    return <LoadingSpinner />;
+  }
+
+  return isSignedIn ? <>{children}</> : <Navigate to="/sign-in" replace />;
+};
 
 const AppRouter = () => {
   return (
     <Routes>
-      <Route element={<MainLayout />}>
-        <Route index element={<Home />}></Route>
-        <Route path="/about" element={<About />}></Route>
-        <Route path="/base" element={<Base />}></Route>
-        <Route path="*" element={<NotFound />}></Route>
+      <Route path="/" element={<MainLayout />}>
+        <Route index element={<Home />} />
+        <Route path="about" element={<About />} />
+        <Route path="base" element={<Base />} />
+
+        {/* Authentication routes */}
+        <Route
+          path="sign-in/*"
+          element={
+            <div className="flex items-center justify-center min-h-screen p-4">
+              <div className="w-full max-w-md">
+                <SignIn routing="path" path="/sign-in" />
+              </div>
+            </div>
+          }
+        />
+        <Route
+          path="sign-up/*"
+          element={
+            <div className="flex items-center justify-center min-h-screen p-4">
+              <div className="w-full max-w-md">
+                <SignUp routing="path" path="/sign-up" />
+              </div>
+            </div>
+          }
+        />
+
+        {/* Protected routes */}
+        <Route
+          path="create-base"
+          element={
+            <ProtectedRoute>
+              <BaseUpload />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="dashboard"
+          element={
+            <ProtectedRoute>
+              <Page />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );

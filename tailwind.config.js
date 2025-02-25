@@ -2,7 +2,7 @@
 const {
 	default: flattenColorPalette,
 } = require("tailwindcss/lib/util/flattenColorPalette");
-function addVariablesForColors({ addBase, theme }: any) {
+function addVariablesForColors({ addBase, theme }) {
 	let allColors = flattenColorPalette(theme("colors"));
 	let newVars = Object.fromEntries(
 		Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
@@ -12,16 +12,16 @@ function addVariablesForColors({ addBase, theme }: any) {
 		":root": newVars,
 	});
 }
-export default {
-	darkMode: 'class',
+module.exports = {
+	darkMode: ["class"],
 	content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
 	theme: {
 		container: {
 			center: true,
-			padding: "2rem",
+			padding: '2rem',
 			screens: {
-				"2xl": "1400px",
-			},
+				'2xl': '1400px'
+			}
 		},
 		extend: {
 			borderRadius: {
@@ -69,22 +69,32 @@ export default {
 					'3': 'hsl(var(--chart-3))',
 					'4': 'hsl(var(--chart-4))',
 					'5': 'hsl(var(--chart-5))'
+				},
+				sidebar: {
+					DEFAULT: 'hsl(var(--sidebar-background))',
+					foreground: 'hsl(var(--sidebar-foreground))',
+					primary: 'hsl(var(--sidebar-primary))',
+					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+					accent: 'hsl(var(--sidebar-accent))',
+					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+					border: 'hsl(var(--sidebar-border))',
+					ring: 'hsl(var(--sidebar-ring))'
 				}
 			}
 		},
 		keyframes: {
 			aurora: {
 				from: {
-					backgroundPosition: "50% 50%, 50% 50%",
+					backgroundPosition: '50% 50%, 50% 50%'
 				},
 				to: {
-					backgroundPosition: "350% 50%, 350% 50%",
-				},
-			},
+					backgroundPosition: '350% 50%, 350% 50%'
+				}
+			}
 		},
 		animation: {
-			aurora: "aurora 60s linear infinite",
-		},
+			aurora: 'aurora 60s linear infinite'
+		}
 	},
 	plugins: [require("tailwindcss-animate"), addVariablesForColors],
 };

@@ -2,6 +2,7 @@ import { BrowserRouter } from "react-router";
 import { ThemeProvider } from "./components/theme-provider";
 import AppRouter from "./routes/AppRouter";
 import "./App.css";
+import { Toaster } from "sonner";
 
 const App = () => {
   return (
@@ -9,6 +10,7 @@ const App = () => {
       <BrowserRouter>
         <AppRouter />
       </BrowserRouter>
+      <Toaster position="top-right" />
     </ThemeProvider>
   );
 };

@@ -9,10 +9,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { useAuth, UserButton, useUser } from "@clerk/clerk-react";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { setTheme } = useTheme();
+  const { isSignedIn } = useAuth();
+  const { user } = useUser();
 
   const navigation = [
     { title: "Home", path: "/" },
@@ -20,6 +23,11 @@ const Header = () => {
     { title: "Town Hall Levels", path: "/town-hall" },
     { title: "About", path: "/about" },
   ];
+
+  // Mobile UserButton click handler to prevent menu from closing
+  const handleUserButtonClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent event from bubbling up to parent elements
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:bg-background/80 dark:border-border/30">
@@ -61,6 +69,11 @@ const Header = () => {
                 {item.title}
               </Link>
             ))}
+            {isSignedIn && (
+              <>
+                <Link to="/dashboard">Dashboard</Link>
+              </>
+            )}
           </nav>
         </div>
 
@@ -117,15 +130,24 @@ const Header = () => {
             </Link>
 
             <div className="flex items-center gap-4">
-              <Link to="/login" className="text-sm font-medium">
-                Login
-              </Link>
-              <Link
-                to="/sign-up"
-                className="text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-md"
-              >
-                Sign Up
-              </Link>
+              {isSignedIn ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">
+                    Hello, {user?.firstName || "User"}
+                  </span>
+                  <UserButton afterSignOutUrl="/" />
+                </div>
+              ) : (
+                <>
+                  <Link to="/sign-in">Login</Link>
+                  <Link
+                    to="/sign-up"
+                    className="text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-md"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
           </div>
 
@@ -158,6 +180,18 @@ const Header = () => {
                   {item.title}
                 </Link>
               ))}
+
+              {/* Add Dashboard link in mobile menu when signed in */}
+              {isSignedIn && (
+                <Link
+                  to="/dashboard"
+                  className="text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+              )}
+
               <div className="flex flex-col space-y-3 pt-4 border-t border-border/40 dark:border-border/30">
                 <Link
                   to="https://github.com/vichea69"
@@ -168,22 +202,47 @@ const Header = () => {
                   <Github className="h-5 w-5" />
                   <span>GitHub</span>
                 </Link>
-                <div className="flex flex-col space-y-2 pt-4">
-                  <Link
-                    to="/login"
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 dark:hover:bg-accent/40 dark:text-foreground/90"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    to="/sign-up"
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 dark:bg-primary/90 dark:hover:bg-primary"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Sign Up
-                  </Link>
-                </div>
+
+                {/* Improved mobile auth section */}
+                {isSignedIn ? (
+                  <div className="mt-4 pt-4 border-t border-border/40 dark:border-border/30">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-sm font-medium">
+                        Hello, {user?.firstName || "User"}
+                      </span>
+                      {/* Enhanced UserButton for mobile */}
+                      <div className="z-[999]" onClick={handleUserButtonClick}>
+                        <UserButton
+                          afterSignOutUrl="/"
+                          appearance={{
+                            elements: {
+                              userButtonAvatarBox: "w-10 h-10",
+                              userButtonTrigger: "focus:shadow-none",
+                              userButtonPopoverCard: "z-[999] shadow-lg",
+                            },
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col space-y-3 mt-4 pt-4 border-t border-border/40 dark:border-border/30">
+                    <Link
+                      to="/sign-in"
+                      className="inline-flex items-center justify-center w-full rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 dark:hover:bg-accent/40 dark:text-foreground/90"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      to="/sign-up"
+                      className="inline-flex items-center justify-center w-full rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 dark:bg-primary/90 dark:hover:bg-primary"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
+                )}
               </div>
             </nav>
           </div>
