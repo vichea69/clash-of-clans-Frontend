@@ -9,7 +9,11 @@ import { ImagePlus, Loader2 } from "lucide-react";
 import { useBaseUpload } from "@/hooks/useBaseUpload";
 import type { BaseFormData } from "@/types/base";
 
-const BaseUpload = () => {
+interface BaseUploadProps {
+  onSuccess?: () => void;
+}
+
+const BaseUpload = ({ onSuccess }: BaseUploadProps) => {
   const { uploadBaseWithImage, isLoading } = useBaseUpload();
   const [formData, setFormData] = useState<BaseFormData>({
     name: "",
@@ -45,7 +49,10 @@ const BaseUpload = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    await uploadBaseWithImage(formData);
+    const success = await uploadBaseWithImage(formData);
+    if (success && onSuccess) {
+      onSuccess();
+    }
   };
 
   return (

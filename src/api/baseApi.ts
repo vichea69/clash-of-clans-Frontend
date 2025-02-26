@@ -32,22 +32,33 @@ export const fetchBases = async () => {
 
     console.log('API Response Data:', data);
 
-    // Extract array data from common response patterns
+    // Extract and sort array data from common response patterns
     if (data && typeof data === 'object') {
       const possibleArrays = ['data', 'results', 'bases'];
+      let baseArray;
 
-      // Return the first valid array found in the response
+      // Get the first valid array found in the response
       for (const key of possibleArrays) {
         if (data[key] && Array.isArray(data[key])) {
           console.log(`Found array in response.${key}:`, data[key]);
-          return data[key];
+          baseArray = data[key];
+          break;
         }
       }
 
-      // If data itself is an array, return it
-      if (Array.isArray(data)) {
+      // If no array found in nested properties, check if data itself is an array
+      if (!baseArray && Array.isArray(data)) {
         console.log('Response data is an array:', data);
-        return data;
+        baseArray = data;
+      }
+
+      // If we found an array, sort it by createdAt or updatedAt
+      if (baseArray) {
+        return baseArray.sort((a, b) => {
+          const dateA = new Date(a.createdAt || a.updatedAt || 0);
+          const dateB = new Date(b.createdAt || b.updatedAt || 0);
+          return dateB.getTime() - dateA.getTime(); // Most recent first
+        });
       }
     }
 
@@ -77,4 +88,51 @@ export const uploadPublicBase = async (formData: FormData) => {
   }
 };
 
+export const updatePublicBase = async (baseId: string, formData: FormData) => {
+  try {
+    const response = await baseApi.put(`/public-bases/${baseId}/`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error updating base:', error);
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Failed to update base");
+    }
+    throw new Error("Failed to update base");
+  }
+};
+
+export const deletePublicBase = async (baseId: string) => {
+  try {
+    const response = await baseApi.delete(`/public-bases/${baseId}/`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting base:', error);
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Failed to delete base");
+    }
+    throw new Error("Failed to delete base");
+  }
+};
+
+export const fetchBaseById = async (baseId: string) => {
+  try {
+    const response = await baseApi.get(`/public-bases/${baseId}/`);
+    console.log('API Response for base:', response.data);
+    // The backend returns { success: true, data: baseObj }
+    return response.data.data; // Extract the base data from the response
+  } catch (error) {
+    console.error('Error fetching base:', error);
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Failed to fetch base");
+    }
+    throw new Error("Failed to fetch base");
+  }
+};
+
 export default baseApi;
+

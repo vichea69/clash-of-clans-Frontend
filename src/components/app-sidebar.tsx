@@ -8,9 +8,11 @@ import {
   GalleryVerticalEnd,
   Map,
   PieChart,
+  Plus,
   Settings2,
   SquareTerminal,
 } from "lucide-react";
+import { useNavigate } from "react-router";
 
 import { NavMain } from "@/components/nav-main";
 import { NavProjects } from "@/components/nav-projects";
@@ -57,11 +59,12 @@ const data = {
       items: [
         {
           title: "Base List",
-          url: "#",
+          url: "/dashboard",
         },
         {
           title: "Create Base",
-          url: "create-base",
+          url: "dashboard?showBaseUpload=true",
+          icon: Plus,
         },
         {
           title: "Base Settings",
@@ -154,14 +157,34 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  onBaseChange?: () => void;
+}
+
+export function AppSidebar({ onBaseChange, ...props }: AppSidebarProps) {
+  const navigate = useNavigate();
+
+  const handleCreateBase = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    navigate("/dashboard?showBaseUpload=true");
+  };
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain
+          items={data.navMain.map((item) => ({
+            ...item,
+            items: item.items?.map((subItem) => ({
+              ...subItem,
+              onClick:
+                subItem.title === "Create Base" ? handleCreateBase : undefined,
+            })),
+          }))}
+        />
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>

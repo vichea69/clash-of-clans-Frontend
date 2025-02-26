@@ -1,5 +1,7 @@
+import PublicBaseList from "@/components/PublicBaseList.tsx";
+
 const About = () => {
-  return <div>About</div>;
+  return (<PublicBaseList></PublicBaseList>);
 };
 
 export default About;

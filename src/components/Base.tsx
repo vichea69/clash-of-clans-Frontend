@@ -5,6 +5,7 @@ import { useEffect, useState, useCallback, memo, useRef } from "react";
 import { fetchBases } from "@/api/baseApi";
 import { useAuth, useUser } from "@clerk/clerk-react";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 
 // Define proper interface based on BaseList.tsx
 interface Base {
@@ -12,6 +13,8 @@ interface Base {
   name: string;
   imageUrl: string;
   link: string;
+  createdAt?: string; // Add this field
+  updatedAt?: string; // Add this field
   user: {
     name: string;
     avatar?: string;
@@ -39,19 +42,24 @@ const ComponentCard = memo(({ component }: { component: Base }) => {
       <button
         onClick={copyLink}
         aria-label="Copy link"
-        className="absolute left-1.5 top-1.5 sm:left-2 sm:top-2 z-10 rounded-md bg-white/90 p-2 sm:p-2.5
-          opacity-100 transition-opacity 
-          active:scale-95 active:bg-gray-100
-          focus:outline-none focus:ring-2 focus:ring-primary"
+        className="absolute left-1.5 top-1.5 sm:left-2 sm:top-2 z-10 
+          rounded-md bg-background/90 p-2 sm:p-2.5
+          opacity-100 transition-all duration-200
+          border border-border/40 shadow-sm
+          hover:bg-accent hover:text-accent-foreground
+          active:scale-95
+          focus:outline-none focus:ring-2 focus:ring-ring"
       >
         <Copy className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
       </button>
       {isCreator && (
-        <div className="absolute right-1.5 top-1.5 sm:right-2 sm:top-2 z-10 rounded-md bg-blue-500 px-1.5 py-0.5 sm:px-2 sm:py-1">
-          <span className="text-[10px] sm:text-xs text-white font-medium">
-            Your Upload
-          </span>
-        </div>
+        <Badge
+          variant="secondary"
+          className="absolute right-1.5 top-1.5 sm:right-2 sm:top-2 z-10
+            text-[10px] sm:text-xs font-medium"
+        >
+          Your Upload
+        </Badge>
       )}
       <a href={component.link} className="block touch-manipulation">
         <div className="aspect-square relative overflow-hidden">
@@ -85,6 +93,11 @@ const ComponentCard = memo(({ component }: { component: Base }) => {
                   ? user?.username || user?.firstName || "You"
                   : component.user?.name || "Unknown user"}
               </span>
+              {component.createdAt && (
+                <span className="text-[10px] sm:text-xs text-muted-foreground truncate block">
+                  {new Date(component.createdAt).toLocaleDateString()}
+                </span>
+              )}
             </div>
           </div>
         </div>

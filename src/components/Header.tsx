@@ -20,8 +20,6 @@ const Header = () => {
   const navigation = [
     { title: "Home", path: "/" },
     { title: "Base Layouts", path: "/base" },
-    { title: "Town Hall Levels", path: "/town-hall" },
-    { title: "About", path: "/about" },
   ];
 
   // Mobile UserButton click handler to prevent menu from closing
@@ -72,6 +70,7 @@ const Header = () => {
             {isSignedIn && (
               <>
                 <Link to="/dashboard">Dashboard</Link>
+                <Link to="/dashboard?showBaseUpload=true">Upload Base</Link>
               </>
             )}
           </nav>
@@ -181,15 +180,27 @@ const Header = () => {
                 </Link>
               ))}
 
-              {/* Add Dashboard link in mobile menu when signed in */}
+              {/* Add Dashboard and Upload Base links in mobile menu when signed in */}
               {isSignedIn && (
-                <Link
-                  to="/dashboard"
-                  className="text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Dashboard
-                </Link>
+                <>
+                  <Link
+                    to="/dashboard"
+                    className="text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    to="/dashboard?showBaseUpload=true"
+                    className="text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90 flex items-center"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <span>Upload Base</span>
+                    <span className="ml-2 px-2 py-0.5 text-xs bg-primary/10 text-primary rounded-full">
+                      New
+                    </span>
+                  </Link>
+                </>
               )}
 
               <div className="flex flex-col space-y-3 pt-4 border-t border-border/40 dark:border-border/30">

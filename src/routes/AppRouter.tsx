@@ -7,8 +7,8 @@ import Home from "@/page/Home";
 import About from "@/page/About";
 import Base from "@/components/Base";
 import NotFound from "@/page/NotFound";
-import BaseUpload from "@/page/base/BaseUpload";
 import Page from "@/app/dashboard/page";
+import BaseUpdate from "@/page/base/BaseUpdate";
 
 // Loading component for fallback
 const LoadingSpinner = () => <div>Loading...</div>;
@@ -55,15 +55,7 @@ const AppRouter = () => {
         />
 
         {/* Protected routes */}
-        <Route
-          path="create-base"
-          element={
-            <ProtectedRoute>
-              <BaseUpload />
-            </ProtectedRoute>
-          }
-        />
-
+       
         <Route
           path="dashboard"
           element={
@@ -72,6 +64,8 @@ const AppRouter = () => {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/bases/:baseId/edit" element={<BaseUpdate />} />
 
         <Route path="*" element={<NotFound />} />
       </Route>

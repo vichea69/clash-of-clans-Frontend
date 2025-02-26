@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Copy } from "lucide-react";
 import { AuroraBackground } from "@/components/ui/aurora-background";
+import { useNavigate } from "react-router";
 
 const Hero = () => {
+  const navigate = useNavigate();
   const copyCommand = () => {
     navigator.clipboard.writeText("bun create elysia app");
   };
@@ -12,10 +14,7 @@ const Hero = () => {
       <div className="min-h-[80vh] flex flex-col items-center justify-center text-center px-4 relative z-10">
         {/* Logo */}
         <div className="mb-6 relative">
-          {/* Japanese Text */}
-          <span className="absolute -top-4 left-0 text-sm text-pink-300/80 font-medium tracking-wider">
-            ビチア デベロッパー
-          </span>
+          {/* Logo Image */}
 
           {/* Main Logo Text */}
           <div className="relative inline-block">
@@ -23,12 +22,6 @@ const Hero = () => {
               <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Clash Of Clans
               </span>
-              <span className="absolute -top-1 right-0 text-pink-400/80 text-2xl">
-                +
-              </span>
-              {/* <span className="absolute -right-6 top-0 text-yellow-200/80 text-sm">
-                35
-              </span> */}
             </h1>
 
             {/* Logo Border/Background */}
@@ -64,6 +57,7 @@ const Hero = () => {
           <Button
             size="lg"
             className="bg-pink-500 hover:bg-pink-600 text-white px-8"
+            onClick={() => navigate("/base")}
           >
             Get Started
           </Button>

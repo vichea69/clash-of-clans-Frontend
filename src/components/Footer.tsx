@@ -1,4 +1,4 @@
-import { Hexagon, Twitter, Github } from "lucide-react";
+import { Hexagon,  Github } from "lucide-react";
 import { FooterUI } from "@/components/ui/footer";
 
 const Footer = () => {
@@ -6,16 +6,11 @@ const Footer = () => {
     <div className="w-full">
       <FooterUI
         logo={<Hexagon className="h-10 w-10" />}
-        brandName="Awesome Corp"
+        brandName="Clash Base Hub"
         socialLinks={[
           {
-            icon: <Twitter className="h-5 w-5" />,
-            href: "https://twitter.com",
-            label: "Twitter",
-          },
-          {
             icon: <Github className="h-5 w-5" />,
-            href: "https://github.com",
+            href: "https://github.com/vichea69",
             label: "GitHub",
           },
         ]}
@@ -30,7 +25,7 @@ const Footer = () => {
           { href: "/terms", label: "Terms" },
         ]}
         copyright={{
-          text: "© 2024 Awesome Corp",
+          text: `© ${new Date().getFullYear()} Clash Base Hub`,
           license: "All rights reserved",
         }}
       />
