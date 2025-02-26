@@ -10,7 +10,12 @@ interface ImageUploadProps {
   name?: string;
 }
 
-export const ImageUpload = ({ onChange, value, required, id, name }: ImageUploadProps) => {
+export const ImageUpload = ({
+  onChange,
+  required,
+  id,
+  name,
+}: ImageUploadProps) => {
   const [preview, setPreview] = useState<string>("");
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -57,4 +62,4 @@ export const ImageUpload = ({ onChange, value, required, id, name }: ImageUpload
       )}
     </div>
   );
-}; 
+};

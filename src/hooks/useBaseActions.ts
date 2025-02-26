@@ -2,10 +2,9 @@ import { useState } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 import { toast } from 'sonner';
 import { updatePublicBase, deletePublicBase } from '@/api/baseApi';
-import type { BaseFormData } from '@/types/base';
 
 export const useBaseActions = (baseId?: string) => {
-    const { getToken, isSignedIn, userId } = useAuth();
+    const { getToken, isSignedIn } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
     const updateBase = async (formData: FormData) => {
