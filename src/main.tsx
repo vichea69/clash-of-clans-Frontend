@@ -5,16 +5,16 @@ import "./index.css";
 import { ClerkProvider } from "@clerk/clerk-react";
 
 // Import your publishable key
-const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 // Check if the key exists
-if (!publishableKey) {
+if (!clerkPubKey) {
   throw new Error("Missing Clerk Publishable Key");
 }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ClerkProvider publishableKey={publishableKey}>
+    <ClerkProvider publishableKey={clerkPubKey}>
       <App />
     </ClerkProvider>
   </React.StrictMode>

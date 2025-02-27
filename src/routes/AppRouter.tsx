@@ -55,7 +55,7 @@ const AppRouter = () => {
         />
 
         {/* Protected routes */}
-       
+
         <Route
           path="dashboard"
           element={
