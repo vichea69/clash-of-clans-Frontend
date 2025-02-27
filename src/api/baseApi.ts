@@ -73,19 +73,40 @@ export const fetchBases = async () => {
 
 export const uploadPublicBase = async (formData: FormData) => {
   try {
-    const response = await baseApi.post("/public-bases/", formData, {
+    // Log request details
+    console.log('API URL:', import.meta.env.VITE_API_URL);
+    console.log('Token:', localStorage.getItem('backendToken'));
+    console.log('FormData contents:', {
+      name: formData.get('name'),
+      link: formData.get('link'),
+      image: formData.get('image') ? 'Image present' : 'No image',
+      clerkUserId: formData.get('clerkUserId')
+    });
+
+    const response = await baseApi.post("/public-bases", formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
+        'Accept': 'application/json',
       },
+      timeout: 30000,
     });
+
+    if (!response.data) {
+      throw new Error('No response data received');
+    }
+
+    if (!response.data.success) {
+      throw new Error(response.data.message || 'Upload failed');
+    }
 
     return response.data;
   } catch (error) {
-    console.error('Error uploading base:', error);
-    if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || "Failed to upload base");
+    console.error('Upload error details:', error);
+    if (axios.isAxiosError(error)) {
+      const message = error.response?.data?.message || error.message;
+      throw new Error(`Upload failed: ${message}`);
     }
-    throw new Error("Failed to upload base");
+    throw error;
   }
 };
 

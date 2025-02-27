@@ -17,34 +17,49 @@ export const useBaseUpload = () => {
     setIsLoading(true);
 
     try {
+      // Get token without specifying template
       const token = await getToken();
+      console.log('Authentication status:', { isSignedIn, hasToken: !!token });
 
-      // Only proceed if we have a token
       if (!token) {
         toast.error("Authentication failed. Please sign in again.");
         return false;
       }
 
-      localStorage.setItem('backendToken', token as string);
+      // Store token and create form data
+      localStorage.setItem('backendToken', token);
 
       const submitData = new FormData();
-      submitData.append("name", formData.name);
-      submitData.append("link", formData.link);
+      submitData.append("name", formData.name.trim());
+      submitData.append("link", formData.link.trim());
+
       if (formData.image) {
-        submitData.append("image", formData.image);
+        const imageFile = formData.image;
+        console.log('Image details:', {
+          name: imageFile.name,
+          type: imageFile.type,
+          size: imageFile.size
+        });
+        submitData.append("image", imageFile);
       }
+
       if (userId) {
         submitData.append("clerkUserId", userId);
       }
 
-      await uploadPublicBase(submitData);
-      toast.success("Base uploaded successfully");
-      return true;
+      try {
+        const response = await uploadPublicBase(submitData);
+        console.log('Upload successful:', response);
+        toast.success("Base uploaded successfully");
+        return true;
+      } catch (uploadError) {
+        console.error('Upload error:', uploadError);
+        toast.error(uploadError instanceof Error ? uploadError.message : "Upload failed");
+        return false;
+      }
     } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error(
-        error instanceof Error ? error.message : "Failed to upload base"
-      );
+      console.error("Form submission error:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to process upload");
       return false;
     } finally {
       setIsLoading(false);

@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { ImagePlus, Loader2 } from "lucide-react";
 import { useBaseUpload } from "@/hooks/useBaseUpload";
 import type { BaseFormData } from "@/types/base";
+import { toast } from "sonner";
 
 interface BaseUploadProps {
   onSuccess?: () => void;
@@ -48,6 +49,42 @@ const BaseUpload = ({ onSuccess }: BaseUploadProps) => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Validate form data
+    if (!formData.name.trim()) {
+      toast.error("Please enter a base name");
+      return;
+    }
+
+    if (!formData.link.trim()) {
+      toast.error("Please enter a base link");
+      return;
+    }
+
+    if (!formData.image) {
+      toast.error("Please select an image");
+      return;
+    }
+
+    // Validate image size (max 5MB)
+    if (formData.image.size > 5 * 1024 * 1024) {
+      toast.error("Image size should be less than 5MB");
+      return;
+    }
+
+    // Validate image type
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+    if (!allowedTypes.includes(formData.image.type)) {
+      toast.error("Please upload a valid image file (JPEG, PNG, or GIF)");
+      return;
+    }
+
+    console.log("Submitting form data:", {
+      name: formData.name,
+      link: formData.link,
+      imageSize: formData.image.size,
+      imageType: formData.image.type,
+    });
 
     const success = await uploadBaseWithImage(formData);
     if (success && onSuccess) {
