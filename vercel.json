@@ -1,5 +1,5 @@
 {
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://api.vichea.engineer/api/v1/$1" }
-  ]
-}
+    "rewrites": [
+      { "source": "/(.*)", "destination": "/index.html" }
+    ]
+  }
