@@ -80,40 +80,39 @@ const ComponentCard = memo(({ component }: { component: Base }) => {
         </Badge>
       )}
       <a href={component.link} className="block touch-manipulation">
-        <div className="aspect-square relative overflow-hidden">
+        <div className="aspect-square relative overflow-hidden w-full h-full">
           <img
             src={component.imageUrl || "/placeholder.svg"}
             alt={component.name}
-            className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
             decoding="async"
           />
         </div>
         <div className="p-2 sm:p-3 md:p-4">
-          <div className="flex items-center">
-            <Avatar.Root className="h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 rounded-full overflow-hidden border flex-shrink-0">
-              <Avatar.Image
-                src={getAvatarUrl()}
-                alt={getUserName()}
-                className="h-full w-full object-cover"
-              />
-              <Avatar.Fallback className="flex h-full w-full items-center justify-center bg-muted text-[10px] sm:text-xs">
-                {getUserName()[0]}
-              </Avatar.Fallback>
-            </Avatar.Root>
-            <div className="ml-1.5 sm:ml-2 overflow-hidden flex-1 min-w-0">
-              <span className="font-medium text-xs sm:text-sm md:text-base truncate block">
-                {component.name}
-              </span>
-              <span className="text-[10px] sm:text-xs text-muted-foreground truncate block">
-                by {getUserName()}
-              </span>
-              {component.createdAt && (
+          <div className="flex justify-between items-end">
+            <div className="flex items-center flex-1">
+              <Avatar.Root className="h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 rounded-full overflow-hidden border flex-shrink-0">
+                <Avatar.Image
+                  src={getAvatarUrl()}
+                  alt={getUserName()}
+                  className="h-full w-full object-cover"
+                />
+                <Avatar.Fallback className="flex h-full w-full items-center justify-center bg-muted text-[10px] sm:text-xs">
+                  {getUserName()[0]}
+                </Avatar.Fallback>
+              </Avatar.Root>
+              <div className="ml-1.5 sm:ml-2 overflow-hidden">
                 <span className="text-[10px] sm:text-xs text-muted-foreground truncate block">
-                  {new Date(component.createdAt).toLocaleDateString()}
+                  by {getUserName()}
                 </span>
-              )}
+              </div>
             </div>
+            {component.createdAt && (
+              <span className="text-[10px] sm:text-xs text-muted-foreground ml-2">
+                {new Date(component.createdAt).toLocaleDateString()}
+              </span>
+            )}
           </div>
         </div>
       </a>
