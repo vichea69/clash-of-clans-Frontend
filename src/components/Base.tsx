@@ -37,6 +37,24 @@ const ComponentCard = memo(({ component }: { component: Base }) => {
   // Only check for creator status if user is signed in
   const isCreator = isSignedIn && user?.id === component.clerkUserId;
 
+  // Get the appropriate avatar URL
+  const getAvatarUrl = () => {
+    if (isCreator && user?.imageUrl) {
+      // Use Clerk user image if it's the creator
+      return user.imageUrl;
+    }
+    // Fallback to the component's user avatar or placeholder
+    return component.user?.avatar || "/placeholder.svg";
+  };
+
+  // Get the appropriate user name
+  const getUserName = () => {
+    if (isCreator) {
+      return user?.username || user?.firstName || "You";
+    }
+    return component.user?.name || "Unknown user";
+  };
+
   return (
     <div className="group relative rounded-lg border overflow-hidden transition-all duration-200 hover:shadow-md">
       <button
@@ -75,12 +93,12 @@ const ComponentCard = memo(({ component }: { component: Base }) => {
           <div className="flex items-center">
             <Avatar.Root className="h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 rounded-full overflow-hidden border flex-shrink-0">
               <Avatar.Image
-                src={component.user?.avatar || "/placeholder.svg"}
-                alt={component.user?.name || "Unknown"}
+                src={getAvatarUrl()}
+                alt={getUserName()}
                 className="h-full w-full object-cover"
               />
               <Avatar.Fallback className="flex h-full w-full items-center justify-center bg-muted text-[10px] sm:text-xs">
-                {(component.user?.name || "U")[0]}
+                {getUserName()[0]}
               </Avatar.Fallback>
             </Avatar.Root>
             <div className="ml-1.5 sm:ml-2 overflow-hidden flex-1 min-w-0">
@@ -88,10 +106,7 @@ const ComponentCard = memo(({ component }: { component: Base }) => {
                 {component.name}
               </span>
               <span className="text-[10px] sm:text-xs text-muted-foreground truncate block">
-                by{" "}
-                {isSignedIn && isCreator
-                  ? user?.username || user?.firstName || "You"
-                  : component.user?.name || "Unknown user"}
+                by {getUserName()}
               </span>
               {component.createdAt && (
                 <span className="text-[10px] sm:text-xs text-muted-foreground truncate block">
