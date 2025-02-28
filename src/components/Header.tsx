@@ -193,7 +193,7 @@ const Header = () => {
                     className="text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90 flex items-center"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <span>Upload Base</span>
+                    <span className="text-pink-400">Upload Base</span>
                     <span className="ml-2 px-2 py-0.5 text-xs bg-primary/10 text-primary rounded-full">
                       New
                     </span>
