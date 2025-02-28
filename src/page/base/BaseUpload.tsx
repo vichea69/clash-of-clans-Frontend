@@ -66,9 +66,9 @@ const BaseUpload = ({ onSuccess }: BaseUploadProps) => {
       return;
     }
 
-    // Validate image size (max 5MB)
-    if (formData.image.size > 5 * 1024 * 1024) {
-      toast.error("Image size should be less than 5MB");
+    // Validate image size (max 10MB)
+    if (formData.image.size > 10 * 1024 * 1024) {
+      toast.error("Image size should be less than 10MB");
       return;
     }
 
