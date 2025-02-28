@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useAuth, UserButton, useUser } from "@clerk/clerk-react";
+import { GradientButton } from "./buttons/gradient-button/gradient-button";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -139,11 +140,8 @@ const Header = () => {
               ) : (
                 <>
                   <Link to="/sign-in">Login</Link>
-                  <Link
-                    to="/sign-up"
-                    className="text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-md"
-                  >
-                    Sign Up
+                  <Link to="/sign-up">
+                    <GradientButton variant="variant">Sign Up</GradientButton>
                   </Link>
                 </>
               )}
