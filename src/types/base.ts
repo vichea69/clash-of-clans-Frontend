@@ -5,10 +5,15 @@ export interface BaseFormData {
 }
 
 export interface Base {
-    id: string;
+    id: number;
     name: string;
-    link: string;
     imageUrl: string;
-    createdAt: string;
-    // Add other fields as needed
+    link: string;
+    createdAt?: string;
+    updatedAt?: string;
+    user: {
+        name: string;
+        avatar?: string;
+    };
+    clerkUserId?: string;
 } 
