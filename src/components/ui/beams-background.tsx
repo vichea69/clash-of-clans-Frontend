@@ -44,6 +44,7 @@ export function BeamsBackground({
   children,
   intensity = "strong",
 }: AnimatedGradientBackgroundProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const beamsRef = useRef<Beam[]>([]);
   const animationFrameRef = useRef<number>(0);
@@ -55,29 +56,44 @@ export function BeamsBackground({
     strong: 1,
   };
 
-  // Add touch event handlers to prevent scrolling
+  // Enhanced touch event handling for mobile
   useEffect(() => {
+    // Get both the container and canvas elements
+    const container = containerRef.current;
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!container || !canvas) return;
 
-    // Prevent touch events from causing scrolling
+    // More aggressive touch prevention
     const preventTouchScroll = (e: TouchEvent) => {
       e.preventDefault();
+      e.stopPropagation();
     };
 
-    // Add passive: false to override default browser behavior
-    canvas.addEventListener("touchstart", preventTouchScroll, {
-      passive: false,
+    // Apply to both container and canvas for better coverage
+    const elements = [container, canvas];
+
+    elements.forEach((el) => {
+      el.addEventListener("touchstart", preventTouchScroll, { passive: false });
+      el.addEventListener("touchmove", preventTouchScroll, { passive: false });
+      el.addEventListener("touchend", preventTouchScroll, { passive: false });
     });
-    canvas.addEventListener("touchmove", preventTouchScroll, {
-      passive: false,
-    });
-    canvas.addEventListener("touchend", preventTouchScroll, { passive: false });
+
+    // Also prevent wheel events
+    const preventWheel = (e: WheelEvent) => {
+      if (e.target === canvas || e.target === container) {
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener("wheel", preventWheel, { passive: false });
 
     return () => {
-      canvas.removeEventListener("touchstart", preventTouchScroll);
-      canvas.removeEventListener("touchmove", preventTouchScroll);
-      canvas.removeEventListener("touchend", preventTouchScroll);
+      elements.forEach((el) => {
+        el.removeEventListener("touchstart", preventTouchScroll);
+        el.removeEventListener("touchmove", preventTouchScroll);
+        el.removeEventListener("touchend", preventTouchScroll);
+      });
+      window.removeEventListener("wheel", preventWheel);
     };
   }, []);
 
@@ -193,17 +209,23 @@ export function BeamsBackground({
 
   return (
     <div
+      ref={containerRef}
       className={cn(
         "relative min-h-screen w-full overflow-hidden bg-neutral-950",
         className
       )}
+      style={{
+        touchAction: "none",
+        overscrollBehavior: "none", // Prevent bounce/overscroll effects
+      }}
     >
       <canvas
         ref={canvasRef}
         className="absolute inset-0"
         style={{
           filter: "blur(15px)",
-          touchAction: "none", // Disable touch actions via CSS
+          touchAction: "none",
+          pointerEvents: "none", // Make canvas non-interactive
         }}
       />
 
@@ -219,11 +241,22 @@ export function BeamsBackground({
         }}
         style={{
           backdropFilter: "blur(50px)",
-          touchAction: "none", // Disable touch actions on overlay
+          touchAction: "none",
+          pointerEvents: "none", // Make overlay non-interactive
         }}
       />
 
-      <div className="relative z-10 w-full">{children}</div>
+      {/* Content container - with special handling for mobile */}
+      <div
+        className="relative z-10 w-full"
+        style={{
+          position: "relative",
+          zIndex: 10,
+          touchAction: "auto", // Allow normal touch behavior only for content
+        }}
+      >
+        {children}
+      </div>
     </div>
   );
 }
