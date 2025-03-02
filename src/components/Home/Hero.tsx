@@ -2,17 +2,48 @@ import { Button } from "@/components/ui/button";
 import { Copy } from "lucide-react";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { useNavigate } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+// Import the CSS module
+import styles from "./Hero.module.css";
 
 const Hero = () => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const [showScrollIndicator, setShowScrollIndicator] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const firstRenderRef = useRef(true);
 
   const copyCommand = () => {
     navigator.clipboard.writeText("bun create elysia app");
     // You could add a toast notification here
   };
+
+  // Detect page refresh
+  useEffect(() => {
+    // Check if this is a page refresh (not first load)
+    const isPageRefresh =
+      !firstRenderRef.current && performance.navigation?.type === 1;
+
+    if (isPageRefresh || sessionStorage.getItem("pageRefreshed") === "true") {
+      setIsRefreshing(true);
+      sessionStorage.setItem("pageRefreshed", "true");
+
+      // Reset refresh flag after animation completes
+      const timer = setTimeout(() => {
+        setIsRefreshing(false);
+      }, 1500);
+
+      return () => clearTimeout(timer);
+    }
+
+    // Mark that first render has occurred
+    firstRenderRef.current = false;
+
+    // Clear the refresh flag when component unmounts
+    return () => {
+      sessionStorage.removeItem("pageRefreshed");
+    };
+  }, []);
 
   // Animation sequence on component mount
   useEffect(() => {
@@ -42,18 +73,26 @@ const Hero = () => {
 
   return (
     <AuroraBackground>
-      <div className="min-h-[80vh] flex flex-col items-center justify-center text-center px-4 relative z-10">
+      <div
+        className={`min-h-[80vh] flex flex-col items-center justify-center text-center px-4 relative z-10 ${
+          isRefreshing ? styles.refreshFadeIn : ""
+        }`}
+      >
         {/* Logo */}
         <div
           className={`mb-6 relative transition-all duration-1000 transform ${
             isVisible
               ? "opacity-100 translate-y-0"
               : "opacity-0 -translate-y-10"
-          }`}
+          } ${isRefreshing ? styles.refreshSlideDown : ""}`}
         >
           {/* Main Logo Text */}
           <div className="relative inline-block">
-            <h1 className="text-6xl font-bold tracking-tight">
+            <h1
+              className={`text-6xl font-bold tracking-tight ${
+                isRefreshing ? styles.refreshPulse : ""
+              }`}
+            >
               <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient-x">
                 Clash Of Clans
               </span>
@@ -65,7 +104,7 @@ const Hero = () => {
         <h2
           className={`text-4xl md:text-5xl font-bold bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent mb-4 transition-all duration-1000 delay-300 transform ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
+          } ${isRefreshing ? styles.refreshSlideUp : ""}`}
         >
           Ultimate Base Building Strategy Hub
         </h2>
@@ -74,7 +113,7 @@ const Hero = () => {
         <p
           className={`text-lg md:text-xl text-gray-400/90 max-w-2xl mb-8 backdrop-blur-sm transition-all duration-1000 delay-500 transform ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
+          } ${isRefreshing ? styles.refreshFadeIn : ""}`}
         >
           Find{" "}
           <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-400 bg-clip-text text-transparent font-semibold animate-pulse">
@@ -102,7 +141,7 @@ const Hero = () => {
         <div
           className={`flex flex-col sm:flex-row gap-4 transition-all duration-1000 delay-700 transform ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
+          } ${isRefreshing ? styles.refreshScaleIn : ""}`}
         >
           <Button
             size="lg"

@@ -1,0 +1,46 @@
+/* Refresh animation classes for Hero component */
+@keyframes refreshFadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes refreshSlideDown {
+  0% { transform: translateY(-50px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes refreshSlideUp {
+  0% { transform: translateY(50px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes refreshScaleIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes refreshPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.refreshFadeIn {
+  animation: refreshFadeIn 0.8s ease-out forwards;
+}
+
+.refreshSlideDown {
+  animation: refreshSlideDown 0.8s ease-out forwards;
+}
+
+.refreshSlideUp {
+  animation: refreshSlideUp 0.8s ease-out forwards;
+}
+
+.refreshScaleIn {
+  animation: refreshScaleIn 0.8s ease-out forwards;
+}
+
+.refreshPulse {
+  animation: refreshPulse 1.2s ease-in-out;
+} 
