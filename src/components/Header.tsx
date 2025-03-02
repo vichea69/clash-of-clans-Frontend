@@ -33,7 +33,10 @@ const Header = () => {
       <div className="container flex h-14 max-w-screen-2xl items-center justify-between">
         {/* Logo Section - Visible on all screens */}
         <div className="flex items-center space-x-2">
-          <Link to="/" className="flex items-center space-x-2">
+          <Link
+            to="/"
+            className="flex items-center space-x-2 transition-transform hover:scale-105 active:scale-95"
+          >
             <svg
               className="h-6 w-6 text-primary dark:text-primary/90"
               viewBox="0 0 24 24"
@@ -63,15 +66,25 @@ const Header = () => {
               <Link
                 key={idx}
                 to={item.path}
-                className="transition-colors hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90"
+                className="transition-all hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90 hover:scale-105 active:scale-95 relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-blue-400 after:via-purple-400 after:to-pink-400 after:transition-all hover:after:w-full"
               >
                 {item.title}
               </Link>
             ))}
             {isSignedIn && (
               <>
-                <Link to="/dashboard">Dashboard</Link>
-                <Link to="/dashboard?showBaseUpload=true">Upload Base</Link>
+                <Link
+                  to="/dashboard"
+                  className="transition-all hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90 hover:scale-105 active:scale-95 relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-blue-400 after:via-purple-400 after:to-pink-400 after:transition-all hover:after:w-full"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  to="/dashboard?showBaseUpload=true"
+                  className="transition-all hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90 hover:scale-105 active:scale-95 relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-blue-400 after:via-purple-400 after:to-pink-400 after:transition-all hover:after:w-full"
+                >
+                  Upload Base
+                </Link>
               </>
             )}
           </nav>
@@ -85,7 +98,7 @@ const Header = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 dark:text-foreground/80 dark:hover:text-foreground dark:hover:bg-accent/50"
+                className="h-9 w-9 dark:text-foreground/80 dark:hover:text-foreground dark:hover:bg-accent/50 transition-transform hover:scale-110 active:scale-95"
               >
                 <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                 <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -123,7 +136,7 @@ const Header = () => {
               to="https://github.com/vichea69"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 py-2 w-9 px-0 dark:hover:bg-accent/40 dark:text-foreground/80 dark:hover:text-foreground"
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 py-2 w-9 px-0 dark:hover:bg-accent/40 dark:text-foreground/80 dark:hover:text-foreground hover:scale-110 active:scale-95"
             >
               <Github className="h-5 w-5" />
               <span className="sr-only">GitHub</span>
@@ -135,12 +148,22 @@ const Header = () => {
                   <span className="text-sm font-medium">
                     Hello, {user?.firstName || "User"}
                   </span>
-                  <UserButton afterSignOutUrl="/" />
+                  <div className="transition-transform hover:scale-105">
+                    <UserButton afterSignOutUrl="/" />
+                  </div>
                 </div>
               ) : (
                 <>
-                  <Link to="/sign-in">Login</Link>
-                  <Link to="/sign-up">
+                  <Link
+                    to="/sign-in"
+                    className="transition-all hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90 hover:scale-105 active:scale-95 relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-blue-400 after:via-purple-400 after:to-pink-400 after:transition-all hover:after:w-full"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/sign-up"
+                    className="transition-transform hover:scale-105 active:scale-95"
+                  >
                     <GradientButton variant="variant">Sign Up</GradientButton>
                   </Link>
                 </>
@@ -151,12 +174,12 @@ const Header = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring hover:bg-accent hover:text-accent-foreground h-9 py-2 w-9 px-0 dark:hover:bg-accent/40 dark:text-foreground/80 dark:hover:text-foreground"
+            className="md:hidden inline-flex items-center justify-center rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring hover:bg-accent hover:text-accent-foreground h-9 py-2 w-9 px-0 dark:hover:bg-accent/40 dark:text-foreground/80 dark:hover:text-foreground hover:scale-110 active:scale-95"
           >
             {isMenuOpen ? (
-              <X className="h-5 w-5" />
+              <X className="h-5 w-5 animate-in fade-in zoom-in duration-200" />
             ) : (
-              <Menu className="h-5 w-5" />
+              <Menu className="h-5 w-5 animate-in fade-in zoom-in duration-200" />
             )}
           </button>
         </div>
@@ -164,14 +187,14 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden border-t border-border/40 dark:border-border/30 dark:bg-background/95">
+        <div className="md:hidden border-t border-border/40 dark:border-border/30 dark:bg-background/95 animate-in slide-in-from-top duration-300">
           <div className="container py-4">
             <nav className="flex flex-col space-y-4">
               {navigation.map((item, idx) => (
                 <Link
                   key={idx}
                   to={item.path}
-                  className="text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90"
+                  className="text-sm font-medium transition-all hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90 hover:translate-x-1 active:scale-98"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.title}
@@ -183,18 +206,18 @@ const Header = () => {
                 <>
                   <Link
                     to="/dashboard"
-                    className="text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90"
+                    className="text-sm font-medium transition-all hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90 hover:translate-x-1 active:scale-98"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Dashboard
                   </Link>
                   <Link
                     to="/dashboard?showBaseUpload=true"
-                    className="text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90 flex items-center"
+                    className="text-sm font-medium transition-all hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90 flex items-center hover:translate-x-1 active:scale-98"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <span className="text-pink-400">Upload Base</span>
-                    <span className="ml-2 px-2 py-0.5 text-xs bg-primary/10 text-primary rounded-full">
+                    <span className="ml-2 px-2 py-0.5 text-xs bg-primary/10 text-primary rounded-full animate-pulse">
                       New
                     </span>
                   </Link>
@@ -206,7 +229,7 @@ const Header = () => {
                   to="https://github.com/vichea69"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center space-x-2 text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90"
+                  className="inline-flex items-center space-x-2 text-sm font-medium transition-all hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90 hover:translate-x-1 active:scale-98"
                 >
                   <Github className="h-5 w-5" />
                   <span>GitHub</span>
@@ -238,14 +261,14 @@ const Header = () => {
                   <div className="flex flex-col space-y-3 mt-4 pt-4 border-t border-border/40 dark:border-border/30">
                     <Link
                       to="/sign-in"
-                      className="inline-flex items-center justify-center w-full rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 dark:hover:bg-accent/40 dark:text-foreground/90"
+                      className="inline-flex items-center justify-center w-full rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 dark:hover:bg-accent/40 dark:text-foreground/90 hover:scale-[1.02] active:scale-[0.98]"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Login
                     </Link>
                     <Link
                       to="/sign-up"
-                      className="inline-flex items-center justify-center w-full rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 dark:bg-primary/90 dark:hover:bg-primary"
+                      className="inline-flex items-center justify-center w-full rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 dark:bg-primary/90 dark:hover:bg-primary hover:scale-[1.02] active:scale-[0.98]"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Sign Up
