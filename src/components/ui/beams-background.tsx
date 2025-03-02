@@ -55,6 +55,32 @@ export function BeamsBackground({
     strong: 1,
   };
 
+  // Add touch event handlers to prevent scrolling
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    // Prevent touch events from causing scrolling
+    const preventTouchScroll = (e: TouchEvent) => {
+      e.preventDefault();
+    };
+
+    // Add passive: false to override default browser behavior
+    canvas.addEventListener("touchstart", preventTouchScroll, {
+      passive: false,
+    });
+    canvas.addEventListener("touchmove", preventTouchScroll, {
+      passive: false,
+    });
+    canvas.addEventListener("touchend", preventTouchScroll, { passive: false });
+
+    return () => {
+      canvas.removeEventListener("touchstart", preventTouchScroll);
+      canvas.removeEventListener("touchmove", preventTouchScroll);
+      canvas.removeEventListener("touchend", preventTouchScroll);
+    };
+  }, []);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -175,7 +201,10 @@ export function BeamsBackground({
       <canvas
         ref={canvasRef}
         className="absolute inset-0"
-        style={{ filter: "blur(15px)" }}
+        style={{
+          filter: "blur(15px)",
+          touchAction: "none", // Disable touch actions via CSS
+        }}
       />
 
       <motion.div
@@ -190,6 +219,7 @@ export function BeamsBackground({
         }}
         style={{
           backdropFilter: "blur(50px)",
+          touchAction: "none", // Disable touch actions on overlay
         }}
       />
 
