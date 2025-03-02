@@ -66,7 +66,7 @@ export const fetchBases = async () => {
 
         return baseArray.map(base => {
           // Log the original image URL for debugging
-          //console.log(`Original imageUrl for base ${base.id}:`, base.imageUrl);
+          console.log(`Original imageUrl for base ${base.id}:`, base.imageUrl);
 
           // Construct proper image URL
           let fullImageUrl = null;
