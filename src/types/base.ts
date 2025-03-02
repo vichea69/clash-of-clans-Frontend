@@ -16,4 +16,4 @@ export interface Base {
         avatar?: string;
     };
     clerkUserId?: string;
-} 
+}
