@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useLocation, useNavigate } from "react-router";
 import BaseUpload from "@/page/base/BaseUpload";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, List } from "lucide-react";
 
@@ -28,6 +28,12 @@ export default function Page() {
     new URLSearchParams(location.search).get("showBaseUpload") === "true"
   );
 
+  useEffect(() => {
+    const isUploadView =
+      new URLSearchParams(location.search).get("showBaseUpload") === "true";
+    setShowUpload(isUploadView);
+  }, [location.search]);
+
   const handleBaseChange = useCallback(() => {
     setRefreshKey((prev) => prev + 1);
     if (showUpload) {
@@ -37,12 +43,13 @@ export default function Page() {
   }, [navigate, showUpload]);
 
   const toggleView = useCallback(() => {
-    if (showUpload) {
-      setShowUpload(false);
-      navigate("/dashboard");
+    const newShowUpload = !showUpload;
+    setShowUpload(newShowUpload);
+
+    if (newShowUpload) {
+      navigate("/dashboard?showBaseUpload=true", { replace: true });
     } else {
-      setShowUpload(true);
-      navigate("/dashboard?showBaseUpload=true");
+      navigate("/dashboard", { replace: true });
     }
   }, [showUpload, navigate]);
 
