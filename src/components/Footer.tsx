@@ -1,35 +1,19 @@
-import { Hexagon,  Github } from "lucide-react";
-import { FooterUI } from "@/components/ui/footer";
-
 const Footer = () => {
   return (
-    <div className="w-full">
-      <FooterUI
-        logo={<Hexagon className="h-10 w-10" />}
-        brandName="Clash Base Hub"
-        socialLinks={[
-          {
-            icon: <Github className="h-5 w-5" />,
-            href: "https://github.com/vichea69",
-            label: "GitHub",
-          },
-        ]}
-        mainLinks={[
-          { href: "/products", label: "Products" },
-          { href: "/about", label: "About" },
-          { href: "/blog", label: "Blog" },
-          { href: "/contact", label: "Contact" },
-        ]}
-        legalLinks={[
-          { href: "/privacy", label: "Privacy" },
-          { href: "/terms", label: "Terms" },
-        ]}
-        copyright={{
-          text: `© ${new Date().getFullYear()} Clash Base Hub`,
-          license: "All rights reserved",
-        }}
-      />
-    </div>
+    <footer className="flex flex-col justify-center items-center gap-2 text-sm text-gray-400 dark:text-gray-400 mt-8 mb-6">
+      <p>
+        Built with 💝 From{" "}
+        <button className="appearance-none text-pink-500 text-sm px-1 py-0.5 rounded hover:bg-pink-500/10 focus:bg-pink-500/15 transition-colors">
+          CHEA
+        </button>
+      </p>
+      <figure
+        className="overflow-hidden -collpasable"
+        style={{ width: "144px", height: "0px" }}
+      >
+        {/* Empty figure element */}
+      </figure>
+    </footer>
   );
 };
 

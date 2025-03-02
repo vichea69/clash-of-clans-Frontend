@@ -1,214 +1,249 @@
 import { Button } from "@/components/ui/button";
 import { Copy } from "lucide-react";
 import { AuroraBackground } from "@/components/ui/aurora-background";
+import { BeamsBackground } from "@/components/ui/beams-background";
 import { useNavigate } from "react-router";
-import { useEffect, useState, useRef } from "react";
-// Import the CSS module
+import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import styles from "./Hero.module.css";
+import { useTheme } from "@/components/theme-provider";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Hero = () => {
+  const { theme } = useTheme();
   const navigate = useNavigate();
-  const [isVisible, setIsVisible] = useState(false);
+  const [, setIsVisible] = useState(false);
   const [showScrollIndicator, setShowScrollIndicator] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const firstRenderRef = useRef(true);
 
-  const copyCommand = () => {
+  // Memoize the background component to prevent unnecessary re-renders
+  const BackgroundComponent = useMemo(
+    () => (theme === "dark" ? BeamsBackground : AuroraBackground),
+    [theme]
+  );
+
+  // Memoize handlers
+  const copyCommand = useCallback(() => {
     navigator.clipboard.writeText("bun create elysia app");
-    // You could add a toast notification here
-  };
+    // Add visual feedback here if needed
+  }, []);
 
-  // Detect page refresh
+  const handleGetStarted = useCallback(() => {
+    navigate("/base");
+  }, [navigate]);
+
+  // Optimize refresh detection
   useEffect(() => {
-    // Check if this is a page refresh (not first load)
-    const isPageRefresh =
-      !firstRenderRef.current && performance.navigation?.type === 1;
+    if (!firstRenderRef.current) return;
 
+    const isPageRefresh = performance.navigation?.type === 1;
     if (isPageRefresh || sessionStorage.getItem("pageRefreshed") === "true") {
       setIsRefreshing(true);
       sessionStorage.setItem("pageRefreshed", "true");
 
-      // Reset refresh flag after animation completes
-      const timer = setTimeout(() => {
-        setIsRefreshing(false);
-      }, 1500);
-
+      const timer = setTimeout(() => setIsRefreshing(false), 1500);
       return () => clearTimeout(timer);
     }
 
-    // Mark that first render has occurred
     firstRenderRef.current = false;
-
-    // Clear the refresh flag when component unmounts
-    return () => {
-      sessionStorage.removeItem("pageRefreshed");
-    };
+    return () => sessionStorage.removeItem("pageRefreshed");
   }, []);
 
-  // Animation sequence on component mount
+  // Combine visibility and scroll indicator effects
   useEffect(() => {
     setIsVisible(true);
-
-    // Show scroll indicator after a delay
-    const timer = setTimeout(() => {
-      setShowScrollIndicator(true);
-    }, 1800);
-
+    const timer = setTimeout(() => setShowScrollIndicator(true), 1800);
     return () => clearTimeout(timer);
   }, []);
 
-  // Handle scroll animation for the indicator
+  // Optimize scroll handler with RAF and event passive option
   useEffect(() => {
+    let rafId: number | null = null;
+    let lastScrollY = 0;
+
     const handleScroll = () => {
-      if (window.scrollY > 100) {
-        setShowScrollIndicator(false);
-      } else {
-        setShowScrollIndicator(true);
+      // Only update if we don't have a pending frame
+      if (rafId === null) {
+        rafId = requestAnimationFrame(() => {
+          // Only update state if value actually changed
+          if (window.scrollY <= 100 !== lastScrollY <= 100) {
+            setShowScrollIndicator(window.scrollY <= 100);
+          }
+          lastScrollY = window.scrollY;
+          rafId = null;
+        });
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
+    };
   }, []);
 
+  // Animation variants for Framer Motion
+  const fadeInUp = useMemo(
+    () => ({
+      hidden: { opacity: 0, y: 20 },
+      visible: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.6, ease: "easeOut" },
+      },
+    }),
+    []
+  );
+
+  // MAIN RENDER - optimized with memoization and hardware acceleration
   return (
-    <AuroraBackground>
-      <div
-        className={`min-h-[80vh] flex flex-col items-center justify-center text-center px-4 relative z-10 ${
-          isRefreshing ? styles.refreshFadeIn : ""
-        }`}
-      >
-        {/* Logo */}
-        <div
-          className={`mb-6 relative transition-all duration-1000 transform ${
-            isVisible
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 -translate-y-10"
-          } ${isRefreshing ? styles.refreshSlideDown : ""}`}
-        >
-          {/* Main Logo Text */}
-          <div className="relative inline-block">
-            <h1
-              className={`text-6xl font-bold tracking-tight ${
-                isRefreshing ? styles.refreshPulse : ""
+    <div className="relative will-change-transform">
+      <BackgroundComponent intensity="strong">
+        <AnimatePresence>
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            className={`min-h-[90vh] pt-14 flex flex-col items-center justify-center text-center px-4 relative ${
+              isRefreshing ? styles.refreshFadeIn : ""
+            }`}
+            style={{
+              willChange: "opacity, transform",
+              backfaceVisibility: "hidden",
+            }}
+          >
+            {/* Logo Section - optimized animations */}
+            <motion.div
+              variants={fadeInUp}
+              className={`mb-6 relative ${
+                isRefreshing ? styles.refreshSlideDown : ""
               }`}
             >
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient-x">
-                Clash Of Clans
+              <div className="relative inline-block">
+                <h1
+                  className={`text-6xl font-bold tracking-tight ${
+                    isRefreshing ? styles.refreshPulse : ""
+                  }`}
+                >
+                  <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient-x">
+                    Clash Of Clans
+                  </span>
+                </h1>
+              </div>
+            </motion.div>
+
+            {/* Main Heading */}
+            <motion.h2
+              variants={fadeInUp}
+              className={`text-4xl md:text-5xl font-bold bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent mb-4 ${
+                isRefreshing ? styles.refreshSlideUp : ""
+              }`}
+            >
+              Ultimate Base Building Strategy Hub
+            </motion.h2>
+
+            {/* Subheading with optimized animations */}
+            <motion.p
+              variants={fadeInUp}
+              className={`text-lg md:text-xl text-gray-400/90 max-w-2xl mb-8 backdrop-blur-sm ${
+                isRefreshing ? styles.refreshFadeIn : ""
+              }`}
+            >
+              Find{" "}
+              <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-400 bg-clip-text text-transparent font-semibold animate-pulse">
+                proven strategies
+              </span>{" "}
+              and
+              <span className="text-cyan-300/90 hover:text-cyan-200/90 transition-colors">
+                {" "}
+                expert layouts
+              </span>{" "}
+              for your Clash of Clans village. Dominate
+              <span className="text-amber-300/90 font-medium hover:text-amber-200/90 transition-colors">
+                {" "}
+                clan wars
+              </span>{" "}
+              with our
+              <span className="bg-gradient-to-br from-red-400 to-orange-300 bg-clip-text text-transparent hover:from-red-300 hover:to-orange-200 transition-colors">
+                {" "}
+                battle-tested base designs
               </span>
-            </h1>
-          </div>
-        </div>
+              .
+            </motion.p>
 
-        {/* Main Heading */}
-        <h2
-          className={`text-4xl md:text-5xl font-bold bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent mb-4 transition-all duration-1000 delay-300 transform ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          } ${isRefreshing ? styles.refreshSlideUp : ""}`}
-        >
-          Ultimate Base Building Strategy Hub
-        </h2>
-
-        {/* Subheading */}
-        <p
-          className={`text-lg md:text-xl text-gray-400/90 max-w-2xl mb-8 backdrop-blur-sm transition-all duration-1000 delay-500 transform ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          } ${isRefreshing ? styles.refreshFadeIn : ""}`}
-        >
-          Find{" "}
-          <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-400 bg-clip-text text-transparent font-semibold animate-pulse">
-            proven strategies
-          </span>{" "}
-          and
-          <span className="text-cyan-300/90 hover:text-cyan-200/90 transition-colors">
-            {" "}
-            expert layouts
-          </span>{" "}
-          for your Clash of Clans village. Dominate
-          <span className="text-amber-300/90 font-medium hover:text-amber-200/90 transition-colors">
-            {" "}
-            clan wars
-          </span>{" "}
-          with our
-          <span className="bg-gradient-to-br from-red-400 to-orange-300 bg-clip-text text-transparent hover:from-red-300 hover:to-orange-200 transition-colors">
-            {" "}
-            battle-tested base designs
-          </span>
-          .
-        </p>
-
-        {/* CTA Buttons */}
-        <div
-          className={`flex flex-col sm:flex-row gap-4 transition-all duration-1000 delay-700 transform ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          } ${isRefreshing ? styles.refreshScaleIn : ""}`}
-        >
-          <Button
-            size="lg"
-            className="bg-pink-500 hover:bg-pink-600 text-white px-8 transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg hover:shadow-pink-500/20"
-            onClick={() => navigate("/base")}
-          >
-            Get Started
-          </Button>
-
-          <div className="relative flex items-center group">
-            <Button
-              variant="secondary"
-              size="lg"
-              className="bg-purple-900/50 text-purple-300 pr-12 font-mono transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg hover:shadow-purple-500/20"
+            {/* CTA Buttons with optimized animations */}
+            <motion.div
+              variants={fadeInUp}
+              className={`flex flex-col sm:flex-row gap-4 ${
+                isRefreshing ? styles.refreshScaleIn : ""
+              }`}
             >
-              Copy Link Now!
-            </Button>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="absolute right-0 text-purple-300 hover:text-purple-200 transition-all duration-300 group-hover:scale-110 group-active:scale-95"
-              onClick={copyCommand}
-            >
-              <Copy className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+              <Button
+                size="lg"
+                className="bg-pink-500 hover:bg-pink-600 text-white px-8 transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg hover:shadow-pink-500/20"
+                onClick={handleGetStarted}
+              >
+                Get Started
+              </Button>
 
-        {/* Scroll Indicator with animation */}
-        <div
-          className={`absolute bottom-8 transition-all duration-500 transform ${
-            showScrollIndicator
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-5"
-          }`}
-        >
-          <p className="text-gray-400 text-sm mb-2">
-            See why clash players love CHEA
-          </p>
-          <div className="animate-bounce">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="mx-auto text-gray-400"
-            >
-              <path
-                d="M12 5L12 19"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M19 12L12 19L5 12"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-        </div>
-      </div>
-    </AuroraBackground>
+              <div className="relative flex items-center group">
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  className="bg-purple-900/50 text-purple-300 pr-12 font-mono transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg hover:shadow-purple-500/20"
+                >
+                  Copy Link Now!
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="absolute right-0 text-purple-300 hover:text-purple-200 transition-all duration-300 group-hover:scale-110 group-active:scale-95"
+                  onClick={copyCommand}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+            </motion.div>
+
+            {/* Scroll Indicator with optimized animations */}
+            <AnimatePresence>
+              {showScrollIndicator && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.3 }}
+                  className="absolute bottom-8"
+                >
+                  <p className="text-gray-400 text-sm mb-2">
+                    See why clash players love CHEA
+                  </p>
+                  <div className="animate-bounce">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="mx-auto text-gray-400"
+                    >
+                      <path
+                        d="M12 5L12 19M19 12L12 19L5 12"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </AnimatePresence>
+      </BackgroundComponent>
+    </div>
   );
 };
 
