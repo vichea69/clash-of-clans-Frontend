@@ -62,7 +62,7 @@ const data = {
           url: "/dashboard",
         },
         {
-          title: "Create Base",
+          title: "Upload Base",
           url: "dashboard?showBaseUpload=true",
           icon: Plus,
         },
