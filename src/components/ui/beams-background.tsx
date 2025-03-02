@@ -64,8 +64,8 @@ export function BeamsBackground({
     if (!container || !canvas) return;
 
     // More aggressive touch prevention
-    const preventTouchScroll = (e: TouchEvent) => {
-      e.preventDefault();
+    const preventTouchScroll = (e: Event) => {
+      (e as TouchEvent).preventDefault();
       e.stopPropagation();
     };
 
@@ -79,9 +79,9 @@ export function BeamsBackground({
     });
 
     // Also prevent wheel events
-    const preventWheel = (e: WheelEvent) => {
+    const preventWheel = (e: Event) => {
       if (e.target === canvas || e.target === container) {
-        e.preventDefault();
+        (e as WheelEvent).preventDefault();
       }
     };
 
