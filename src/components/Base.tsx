@@ -1,7 +1,7 @@
 import { ChevronDown, Copy, Menu, X } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as Avatar from "@radix-ui/react-avatar";
-import { useEffect, useState, useCallback, memo, useRef } from "react";
+import { useEffect, useState, useCallback, memo, useRef, useMemo } from "react";
 import { fetchBases } from "@/api/baseApi";
 import { useAuth, useUser } from "@clerk/clerk-react";
 import { toast } from "sonner";
@@ -25,35 +25,36 @@ interface Base {
 // Extracted component for better code organization and performance
 const ComponentCard = memo(({ component }: { component: Base }) => {
   const { user, isSignedIn } = useUser();
+
+  // Only check for creator status if user is signed in
+  const isCreator = useMemo(
+    () => isSignedIn && user?.id === component.clerkUserId,
+    [isSignedIn, user?.id, component.clerkUserId]
+  );
+
+  // Memoize functions to prevent recreation on each render
   const copyLink = useCallback(() => {
     navigator.clipboard.writeText(component.link || window.location.href);
-    // Show success toast with shorter duration on mobile
     toast.success("Link copied", {
       duration: 2000,
       position: window.innerWidth < 640 ? "top-center" : "bottom-right",
     });
   }, [component.link]);
 
-  // Only check for creator status if user is signed in
-  const isCreator = isSignedIn && user?.id === component.clerkUserId;
-
-  // Get the appropriate avatar URL
-  const getAvatarUrl = () => {
+  // Memoize user data
+  const avatarUrl = useMemo(() => {
     if (isCreator && user?.imageUrl) {
-      // Use Clerk user image if it's the creator
       return user.imageUrl;
     }
-    // Fallback to the component's user avatar or placeholder
     return component.user?.avatar || "/placeholder.svg";
-  };
+  }, [isCreator, user?.imageUrl, component.user?.avatar]);
 
-  // Get the appropriate user name
-  const getUserName = () => {
+  const userName = useMemo(() => {
     if (isCreator) {
       return user?.username || user?.firstName || "You";
     }
     return component.user?.name || "Unknown user";
-  };
+  }, [isCreator, user?.username, user?.firstName, component.user?.name]);
 
   return (
     <div className="group relative rounded-lg border overflow-hidden transition-all duration-300 hover:shadow-md transform hover:translate-y-[-5px]">
@@ -80,31 +81,42 @@ const ComponentCard = memo(({ component }: { component: Base }) => {
         </Badge>
       )}
       <a href={component.link} className="block touch-manipulation">
-        <div className="aspect-square relative overflow-hidden w-full h-full">
-          <img
-            src={component.imageUrl || "/placeholder.svg"}
-            alt={component.name}
-            className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            loading="lazy"
-            decoding="async"
-          />
+        <div className="aspect-square relative overflow-hidden w-full h-full bg-gray-100">
+          {/* Fallback content */}
+          <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-xl font-medium">
+            {component.name.charAt(0).toUpperCase()}
+          </div>
+
+          {/* Image with lazy loading */}
+          {component.imageUrl && (
+            <img
+              src={component.imageUrl}
+              alt={component.name}
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              loading="lazy"
+              decoding="async"
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+              }}
+            />
+          )}
         </div>
         <div className="p-2 sm:p-3 md:p-4">
           <div className="flex justify-between items-end">
             <div className="flex items-center flex-1">
               <Avatar.Root className="h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 rounded-full overflow-hidden border flex-shrink-0">
                 <Avatar.Image
-                  src={getAvatarUrl()}
-                  alt={getUserName()}
+                  src={avatarUrl}
+                  alt={userName}
                   className="h-full w-full object-cover"
                 />
                 <Avatar.Fallback className="flex h-full w-full items-center justify-center bg-muted text-[10px] sm:text-xs">
-                  {getUserName()[0]}
+                  {userName[0]}
                 </Avatar.Fallback>
               </Avatar.Root>
               <div className="ml-1.5 sm:ml-2 overflow-hidden">
                 <span className="text-[10px] sm:text-xs text-muted-foreground truncate block">
-                  by {getUserName()}
+                  by {userName}
                 </span>
               </div>
             </div>
@@ -214,12 +226,15 @@ const Base = () => {
   }, []);
 
   // Menu items for the dropdown
-  const sortOptions = [
-    { id: "recommended", label: "Recommended" },
-    { id: "popular", label: "Most Popular" },
-    { id: "latest", label: "Latest" },
-    { id: "trending", label: "Trending" },
-  ];
+  const sortOptions = useMemo(
+    () => [
+      { id: "recommended", label: "Recommended" },
+      { id: "popular", label: "Most Popular" },
+      { id: "latest", label: "Latest" },
+      { id: "trending", label: "Trending" },
+    ],
+    []
+  );
 
   const [activeSort, setActiveSort] = useState(sortOptions[0]);
 
@@ -423,8 +438,8 @@ const Base = () => {
                 key={component.id}
                 className="animate-in fade-in slide-in-from-bottom-5"
                 style={{
-                  animationDelay: `${index * 100}ms`,
-                  animationDuration: "700ms",
+                  animationDelay: `${Math.min(index * 50, 500)}ms`,
+                  animationDuration: "500ms",
                 }}
               >
                 <ComponentCard component={component} />
@@ -436,12 +451,14 @@ const Base = () => {
         {/* Back to top button - appears when scrolling down */}
         <button
           onClick={() => window.scrollTo({ top: 0 })}
-          className={`fixed bottom-4 right-4 p-3 bg-primary text-primary-foreground rounded-full shadow-lg transition-all duration-300 hover:bg-primary/90 active:scale-95 ${
-            window.scrollY > 300
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-10 pointer-events-none"
-          }`}
+          className="fixed bottom-4 right-4 p-3 bg-primary text-primary-foreground rounded-full shadow-lg transition-all duration-300 hover:bg-primary/90 active:scale-95"
           aria-label="Back to top"
+          style={{
+            opacity: window.scrollY > 300 ? 1 : 0,
+            transform:
+              window.scrollY > 300 ? "translateY(0)" : "translateY(10px)",
+            pointerEvents: window.scrollY > 300 ? "auto" : "none",
+          }}
         >
           <svg
             width="14"

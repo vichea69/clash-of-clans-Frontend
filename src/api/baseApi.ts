@@ -53,9 +53,45 @@ export const fetchBases = async () => {
         baseArray = data;
       }
 
-      // If we found an array, sort it by createdAt or updatedAt
+      // If we found an array, process image URLs and sort by date
       if (baseArray) {
-        return baseArray.sort((a, b) => {
+        return baseArray.map(base => {
+          // Log the original image URL for debugging
+          console.log(`Original imageUrl for base ${base.id}:`, base.imageUrl);
+
+          // Construct proper image URL
+          let fullImageUrl = null;
+          if (base.imageUrl) {
+            // If it's already a full URL, use it as is
+            if (base.imageUrl.startsWith('http')) {
+              fullImageUrl = base.imageUrl;
+            }
+            // If it's a relative path starting with 'uploads/', construct the correct URL
+            else if (base.imageUrl.startsWith('uploads/')) {
+              // Remove the /api/v1 prefix from the API_URL to get the base URL
+              const baseURL = API_URL.replace(/\/api\/v1$/, '');
+              fullImageUrl = `${baseURL}/${base.imageUrl}`;
+            }
+            // Otherwise, assume it needs the base URL and 'uploads/'
+            else {
+              // Remove the /api/v1 prefix from the API_URL to get the base URL
+              const baseURL = API_URL.replace(/\/api\/v1$/, '');
+              fullImageUrl = `${baseURL}/uploads/${base.imageUrl}`;
+            }
+          }
+
+          console.log(`Processed imageUrl for base ${base.id}:`, fullImageUrl);
+
+          return {
+            ...base,
+            imageUrl: fullImageUrl,
+            // Ensure user avatar is absolute
+            user: base.user ? {
+              ...base.user,
+              avatar: base.user.imageUrl || null
+            } : null
+          };
+        }).sort((a, b) => {
           const dateA = new Date(a.createdAt || a.updatedAt || 0);
           const dateB = new Date(b.createdAt || b.updatedAt || 0);
           return dateB.getTime() - dateA.getTime(); // Most recent first
