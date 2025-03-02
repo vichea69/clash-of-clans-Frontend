@@ -26,6 +26,12 @@ baseApi.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Helper function to get base URL without API path
+const getBaseURL = () => {
+  // Remove any API path segments like /api/v1
+  return API_URL.replace(/\/api\/v1\/?$/, '');
+};
+
 export const fetchBases = async () => {
   try {
     const response = await baseApi.get("/public-bases");
@@ -55,6 +61,9 @@ export const fetchBases = async () => {
 
       // If we found an array, process image URLs and sort by date
       if (baseArray) {
+        const baseURL = getBaseURL();
+        console.log('Base URL for images:', baseURL);
+
         return baseArray.map(base => {
           // Log the original image URL for debugging
           console.log(`Original imageUrl for base ${base.id}:`, base.imageUrl);
@@ -68,14 +77,10 @@ export const fetchBases = async () => {
             }
             // If it's a relative path starting with 'uploads/', construct the correct URL
             else if (base.imageUrl.startsWith('uploads/')) {
-              // Remove the /api/v1 prefix from the API_URL to get the base URL
-              const baseURL = API_URL.replace(/\/api\/v1$/, '');
               fullImageUrl = `${baseURL}/${base.imageUrl}`;
             }
             // Otherwise, assume it needs the base URL and 'uploads/'
             else {
-              // Remove the /api/v1 prefix from the API_URL to get the base URL
-              const baseURL = API_URL.replace(/\/api\/v1$/, '');
               fullImageUrl = `${baseURL}/uploads/${base.imageUrl}`;
             }
           }
