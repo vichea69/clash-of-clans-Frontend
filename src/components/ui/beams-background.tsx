@@ -44,7 +44,6 @@ export function BeamsBackground({
   children,
   intensity = "strong",
 }: AnimatedGradientBackgroundProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const beamsRef = useRef<Beam[]>([]);
   const animationFrameRef = useRef<number>(0);
@@ -55,47 +54,6 @@ export function BeamsBackground({
     medium: 0.85,
     strong: 1,
   };
-
-  // Enhanced touch event handling for mobile
-  useEffect(() => {
-    // Get both the container and canvas elements
-    const container = containerRef.current;
-    const canvas = canvasRef.current;
-    if (!container || !canvas) return;
-
-    // More aggressive touch prevention
-    const preventTouchScroll = (e: Event) => {
-      (e as TouchEvent).preventDefault();
-      e.stopPropagation();
-    };
-
-    // Apply to both container and canvas for better coverage
-    const elements = [container, canvas];
-
-    elements.forEach((el) => {
-      el.addEventListener("touchstart", preventTouchScroll, { passive: false });
-      el.addEventListener("touchmove", preventTouchScroll, { passive: false });
-      el.addEventListener("touchend", preventTouchScroll, { passive: false });
-    });
-
-    // Also prevent wheel events
-    const preventWheel = (e: Event) => {
-      if (e.target === canvas || e.target === container) {
-        (e as WheelEvent).preventDefault();
-      }
-    };
-
-    window.addEventListener("wheel", preventWheel, { passive: false });
-
-    return () => {
-      elements.forEach((el) => {
-        el.removeEventListener("touchstart", preventTouchScroll);
-        el.removeEventListener("touchmove", preventTouchScroll);
-        el.removeEventListener("touchend", preventTouchScroll);
-      });
-      window.removeEventListener("wheel", preventWheel);
-    };
-  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -209,24 +167,15 @@ export function BeamsBackground({
 
   return (
     <div
-      ref={containerRef}
       className={cn(
         "relative min-h-screen w-full overflow-hidden bg-neutral-950",
         className
       )}
-      style={{
-        touchAction: "none",
-        overscrollBehavior: "none", // Prevent bounce/overscroll effects
-      }}
     >
       <canvas
         ref={canvasRef}
         className="absolute inset-0"
-        style={{
-          filter: "blur(15px)",
-          touchAction: "none",
-          pointerEvents: "none", // Make canvas non-interactive
-        }}
+        style={{ filter: "blur(15px)" }}
       />
 
       <motion.div
@@ -241,22 +190,10 @@ export function BeamsBackground({
         }}
         style={{
           backdropFilter: "blur(50px)",
-          touchAction: "none",
-          pointerEvents: "none", // Make overlay non-interactive
         }}
       />
 
-      {/* Content container - with special handling for mobile */}
-      <div
-        className="relative z-10 w-full"
-        style={{
-          position: "relative",
-          zIndex: 10,
-          touchAction: "auto", // Allow normal touch behavior only for content
-        }}
-      >
-        {children}
-      </div>
+      <div className="relative z-10 w-full">{children}</div>
     </div>
   );
 }
