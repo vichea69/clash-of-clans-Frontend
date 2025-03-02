@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL;
-console.log('API URL from .env:', API_URL);
+//console.log('API URL from .env:', API_URL);
 
 const baseApi = axios.create({
   baseURL: API_URL
@@ -37,7 +37,7 @@ export const fetchBases = async () => {
     const response = await baseApi.get("/public-bases");
     const { data } = response;
 
-    console.log('API Response Data:', data);
+    //console.log('API Response Data:', data);
 
     // Extract and sort array data from common response patterns
     if (data && typeof data === 'object') {
@@ -62,11 +62,11 @@ export const fetchBases = async () => {
       // If we found an array, process image URLs and sort by date
       if (baseArray) {
         const baseURL = getBaseURL();
-        console.log('Base URL for images:', baseURL);
+        //console.log('Base URL for images:', baseURL);
 
         return baseArray.map(base => {
           // Log the original image URL for debugging
-          console.log(`Original imageUrl for base ${base.id}:`, base.imageUrl);
+          //console.log(`Original imageUrl for base ${base.id}:`, base.imageUrl);
 
           // Construct proper image URL
           let fullImageUrl = null;
@@ -85,7 +85,7 @@ export const fetchBases = async () => {
             }
           }
 
-          console.log(`Processed imageUrl for base ${base.id}:`, fullImageUrl);
+          //console.log(`Processed imageUrl for base ${base.id}:`, fullImageUrl);
 
           return {
             ...base,
