@@ -19,6 +19,7 @@ import BaseUpload from "@/page/base/BaseUpload";
 import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, List } from "lucide-react";
+import { fetchBases } from "@/api/baseApi";
 
 export default function Page() {
   const location = useLocation();
@@ -27,12 +28,27 @@ export default function Page() {
   const [showUpload, setShowUpload] = useState(
     new URLSearchParams(location.search).get("showBaseUpload") === "true"
   );
+  const [totalBases, setTotalBases] = useState(0);
 
   useEffect(() => {
     const isUploadView =
       new URLSearchParams(location.search).get("showBaseUpload") === "true";
     setShowUpload(isUploadView);
   }, [location.search]);
+
+  useEffect(() => {
+    const loadBasesCount = async () => {
+      try {
+        const bases = await fetchBases();
+        setTotalBases(Array.isArray(bases) ? bases.length : 0);
+      } catch (error) {
+        console.error("Error fetching bases count:", error);
+        setTotalBases(0);
+      }
+    };
+
+    loadBasesCount();
+  }, [refreshKey]);
 
   const handleBaseChange = useCallback(() => {
     setRefreshKey((prev) => prev + 1);
@@ -71,7 +87,7 @@ export default function Page() {
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem>
-                    <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                    <BreadcrumbPage className="text-pink-500">Total Bases: {totalBases}</BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
