@@ -56,13 +56,13 @@ const ComponentCard = memo(({ component }: { component: Base }) => {
   };
 
   return (
-    <div className="group relative rounded-lg border overflow-hidden transition-all duration-200 hover:shadow-md">
+    <div className="group relative rounded-lg border overflow-hidden transition-all duration-300 hover:shadow-md transform hover:translate-y-[-5px]">
       <button
         onClick={copyLink}
         aria-label="Copy link"
         className="absolute left-1.5 top-1.5 sm:left-2 sm:top-2 z-10 
           rounded-md bg-background/90 p-2 sm:p-2.5
-          opacity-100 transition-all duration-200
+          opacity-0 group-hover:opacity-100 transition-all duration-300
           border border-border/40 shadow-sm
           hover:bg-accent hover:text-accent-foreground
           active:scale-95
@@ -144,6 +144,8 @@ const Base = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const [retryCount, setRetryCount] = useState(0);
+  const mainContentRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
 
   // Load data using the fetchBases function directly
   useEffect(() => {
@@ -170,6 +172,36 @@ const Base = () => {
 
     loadBases();
   }, [retryCount]);
+
+  // Add smooth scrolling behavior when component mounts
+  useEffect(() => {
+    // Apply smooth scrolling to the document
+    document.documentElement.style.scrollBehavior = "smooth";
+
+    // Set up intersection observer for fade-in animation
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    if (mainContentRef.current) {
+      observer.observe(mainContentRef.current);
+    }
+
+    // Cleanup function
+    return () => {
+      document.documentElement.style.scrollBehavior = "";
+      if (mainContentRef.current) {
+        observer.unobserve(mainContentRef.current);
+      }
+    };
+  }, []);
 
   // Close mobile menu when clicking outside or when a link is clicked
   const closeMobileMenu = useCallback(() => {
@@ -343,13 +375,18 @@ const Base = () => {
         </div>
       </header>
 
-      <main className="container py-4 px-4 sm:px-6 sm:py-6">
+      <main
+        ref={mainContentRef}
+        className={`container py-4 px-4 sm:px-6 sm:py-6 transition-opacity duration-700 ease-in-out ${
+          isVisible ? "opacity-100" : "opacity-0"
+        }`}
+      >
         {isSignedIn ? (
-          <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+          <div className="mb-6 p-4 bg-blue-50 rounded-lg transform transition-transform duration-500 hover:scale-[1.01]">
             <p className="text-sm text-blue-600">Welcome back!</p>
           </div>
         ) : (
-          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg transform transition-transform duration-500 hover:scale-[1.01]">
             <p className="text-sm text-gray-600">
               Sign in to upload your own bases and see which ones you've
               created.
@@ -357,7 +394,7 @@ const Base = () => {
           </div>
         )}
 
-        {/* Improved grid for mobile - single column on the smallest screens */}
+        {/* Improved grid for mobile with animation */}
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             {[...Array(4)].map((_, i) => (
@@ -365,27 +402,70 @@ const Base = () => {
             ))}
           </div>
         ) : error ? (
-          <div className="p-4 sm:p-8 text-center rounded-lg border border-red-200 bg-red-50 text-red-500">
+          <div className="p-4 sm:p-8 text-center rounded-lg border border-red-200 bg-red-50 text-red-500 animate-in fade-in slide-in-from-bottom-5 duration-700">
             <p className="font-medium mb-2">{error}</p>
             <button
               onClick={handleRetry}
               className="mt-2 px-5 py-3 bg-red-100 hover:bg-red-200 active:bg-red-300
-                rounded-md text-sm font-medium transition-colors"
+                rounded-md text-sm font-medium transition-colors transform transition-transform hover:scale-105 active:scale-95"
             >
               Try Again
             </button>
           </div>
         ) : components.length === 0 ? (
-          <div className="p-6 text-center rounded-lg border bg-background">
+          <div className="p-6 text-center rounded-lg border bg-background animate-in fade-in slide-in-from-bottom-5 duration-700">
             <p className="text-muted-foreground">No components available</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-            {components.map((component) => (
-              <ComponentCard key={component.id} component={component} />
+            {components.map((component, index) => (
+              <div
+                key={component.id}
+                className="animate-in fade-in slide-in-from-bottom-5"
+                style={{
+                  animationDelay: `${index * 100}ms`,
+                  animationDuration: "700ms",
+                }}
+              >
+                <ComponentCard component={component} />
+              </div>
             ))}
           </div>
         )}
+
+        {/* Back to top button - appears when scrolling down */}
+        <button
+          onClick={() => window.scrollTo({ top: 0 })}
+          className={`fixed bottom-4 right-4 p-3 bg-primary text-primary-foreground rounded-full shadow-lg transition-all duration-300 hover:bg-primary/90 active:scale-95 ${
+            window.scrollY > 300
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-10 pointer-events-none"
+          }`}
+          aria-label="Back to top"
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M7 2.33331L7 11.6666"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M2.33334 7L7.00001 2.33333L11.6667 7"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
       </main>
     </div>
   );
