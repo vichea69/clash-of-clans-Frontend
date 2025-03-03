@@ -32,9 +32,18 @@ const getBaseURL = () => {
   return API_URL.replace(/\/api\/v1\/?$/, '');
 };
 
-export const fetchBases = async () => {
+interface FetchBasesParams {
+  page?: number;
+  limit?: number;
+  sort?: string;
+}
+
+export const fetchBases = async (params: FetchBasesParams = {}) => {
   try {
-    const response = await baseApi.get("/public-bases");
+    // Add query parameters to the request if provided
+    const response = await baseApi.get("/public-bases", {
+      params: Object.keys(params).length > 0 ? params : undefined
+    });
     const { data } = response;
 
     //console.log('API Response Data:', data);
@@ -66,7 +75,7 @@ export const fetchBases = async () => {
 
         return baseArray.map(base => {
           // Log the original image URL for debugging
-          console.log(`Original imageUrl for base ${base.id}:`, base.imageUrl);
+          //console.log(`Original imageUrl for base ${base.id}:`, base.imageUrl);
 
           // Construct proper image URL
           let fullImageUrl = null;
