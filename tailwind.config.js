@@ -80,17 +80,20 @@ module.exports = {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				}
-			}
-		},
-		keyframes: {
-			aurora: {
-				from: {
-					backgroundPosition: '50% 50%, 50% 50%'
+			},
+			animation: {
+				'spin': 'spin 1s linear infinite',
+			},
+			keyframes: {
+				spin: {
+					from: {
+						transform: 'rotate(0deg)',
+					},
+					to: {
+						transform: 'rotate(360deg)',
+					},
 				},
-				to: {
-					backgroundPosition: '350% 50%, 350% 50%'
-				}
-			}
+			},
 		},
 		animation: {
 			aurora: 'aurora 60s linear infinite'

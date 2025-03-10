@@ -32,7 +32,7 @@ export const useBaseActions = (baseId?: string) => {
 
             const response = await updatePublicBase(baseId, formData);
             if (response.success) {
-                toast.success("Base updated successfully");
+
                 return true;
             } else {
                 toast.error(response.message || "Failed to update base");

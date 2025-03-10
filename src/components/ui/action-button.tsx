@@ -11,7 +11,8 @@ interface props
     VariantProps<typeof buttonVariants> {
   children: React.ReactNode;
   isPending: boolean;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  type?: "submit" | "reset" | "button";
 }
 
 export default function ActionButton({
@@ -21,18 +22,12 @@ export default function ActionButton({
   size,
   className,
   onClick,
+  type = "submit",
 }: props) {
   return (
     <Button
-      onClick={
-        onClick
-          ? (e: React.MouseEvent<HTMLButtonElement>) => {
-              e.preventDefault();
-              onClick();
-            }
-          : undefined
-      }
-      type="submit"
+      onClick={onClick}
+      type={type}
       disabled={isPending}
       variant={variant}
       size={size}
@@ -53,7 +48,7 @@ export default function ActionButton({
         aria-label="Submitting"
         className={cn(
           isPending ? "visible" : "invisible",
-          "size-5 animate-spin transition-opacity [grid-area:stack]"
+          "w-5 h-5 animate-spin transition-opacity [grid-area:stack]"
         )}
       />
     </Button>

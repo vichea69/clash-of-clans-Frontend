@@ -162,6 +162,7 @@ const BaseUpload = ({ onSuccess }: BaseUploadProps) => {
               className="w-full"
               variant="default"
               size="default"
+              type="submit"
             >
               Upload Base
             </ActionButton>
