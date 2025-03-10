@@ -5,6 +5,7 @@ import { useUser } from "@clerk/clerk-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Base } from "@/types/base";
+import { formatDate } from "@/utils/formatDate";
 
 interface ComponentCardProps {
   component: Base;
@@ -105,6 +106,9 @@ export const ComponentCard = memo(({ component }: ComponentCardProps) => {
               <div className="ml-1.5 sm:ml-2 overflow-hidden">
                 <span className="text-[10px] sm:text-xs text-muted-foreground truncate block">
                   by {userName}
+                </span>
+                <span className="text-[10px] sm:text-xs text-muted-foreground">
+                  {formatDate(component.createdAt)}
                 </span>
               </div>
             </div>
