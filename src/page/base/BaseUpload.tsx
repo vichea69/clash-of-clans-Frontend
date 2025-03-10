@@ -1,21 +1,22 @@
 "use client";
 
 import { useState, type ChangeEvent, type FormEvent } from "react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ImagePlus, Loader2 } from "lucide-react";
+import { ImagePlus } from "lucide-react";
 import { useBaseUpload } from "@/hooks/useBaseUpload";
 import type { BaseFormData } from "@/types/base";
 import { toast } from "sonner";
+import ActionButton from "@/components/ui/action-button";
 
 interface BaseUploadProps {
   onSuccess?: () => void;
 }
 
 const BaseUpload = ({ onSuccess }: BaseUploadProps) => {
-  const { uploadBaseWithImage, isLoading } = useBaseUpload();
+  const { uploadBaseWithImage } = useBaseUpload();
+  const [isPending, setIsPending] = useState(false);
   const [formData, setFormData] = useState<BaseFormData>({
     name: "",
     link: "",
@@ -50,7 +51,7 @@ const BaseUpload = ({ onSuccess }: BaseUploadProps) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validate form data
+    // Form validation
     if (!formData.name.trim()) {
       toast.error("Please enter a base name");
       return;
@@ -66,29 +67,29 @@ const BaseUpload = ({ onSuccess }: BaseUploadProps) => {
       return;
     }
 
-    // Validate image size (max 10MB)
+    // Image validation
     if (formData.image.size > 10 * 1024 * 1024) {
       toast.error("Image size should be less than 10MB");
       return;
     }
 
-    // Validate image type
     const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
     if (!allowedTypes.includes(formData.image.type)) {
       toast.error("Please upload a valid image file (JPEG, PNG, or GIF)");
       return;
     }
 
-    console.log("Submitting form data:", {
-      name: formData.name,
-      link: formData.link,
-      imageSize: formData.image.size,
-      imageType: formData.image.type,
-    });
-
-    const success = await uploadBaseWithImage(formData);
-    if (success && onSuccess) {
-      onSuccess();
+    setIsPending(true);
+    try {
+      const success = await uploadBaseWithImage(formData);
+      if (success && onSuccess) {
+        onSuccess();
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error("Failed to upload base");
+    } finally {
+      setIsPending(false);
     }
   };
 
@@ -156,16 +157,14 @@ const BaseUpload = ({ onSuccess }: BaseUploadProps) => {
               </div>
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Uploading...
-                </>
-              ) : (
-                "Upload Base"
-              )}
-            </Button>
+            <ActionButton
+              isPending={isPending}
+              className="w-full"
+              variant="default"
+              size="default"
+            >
+              Upload Base
+            </ActionButton>
           </form>
         </CardContent>
       </Card>

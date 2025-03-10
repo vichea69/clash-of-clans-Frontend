@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 import { toast } from 'sonner';
 import { uploadPublicBase } from '@/api/baseApi';
@@ -6,15 +5,12 @@ import type { BaseFormData } from '@/types/base';
 
 export const useBaseUpload = () => {
   const { getToken, isSignedIn, userId } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
 
   const uploadBaseWithImage = async (formData: BaseFormData) => {
     if (!isSignedIn) {
       toast.error("You must be signed in to upload a base");
       return false;
     }
-
-    setIsLoading(true);
 
     try {
       // Get token without specifying template
@@ -35,11 +31,6 @@ export const useBaseUpload = () => {
 
       if (formData.image) {
         const imageFile = formData.image;
-        console.log('Image details:', {
-          name: imageFile.name,
-          type: imageFile.type,
-          size: imageFile.size
-        });
         submitData.append("image", imageFile);
       }
 
@@ -47,27 +38,17 @@ export const useBaseUpload = () => {
         submitData.append("clerkUserId", userId);
       }
 
-      try {
-        const response = await uploadPublicBase(submitData);
-        console.log('Upload successful:', response);
-        toast.success("Base uploaded successfully");
-        return true;
-      } catch (uploadError) {
-        console.error('Upload error:', uploadError);
-        toast.error(uploadError instanceof Error ? uploadError.message : "Upload failed");
-        return false;
-      }
+      const response = await uploadPublicBase(submitData);
+      console.log('Upload successful:', response);
+      toast.success("Base uploaded successfully");
+      return true;
     } catch (error) {
       console.error("Form submission error:", error);
-      toast.error(error instanceof Error ? error.message : "Failed to process upload");
-      return false;
-    } finally {
-      setIsLoading(false);
+      throw error; // Let the component handle the error
     }
   };
 
   return {
-    uploadBaseWithImage,
-    isLoading
+    uploadBaseWithImage
   };
 }; 
