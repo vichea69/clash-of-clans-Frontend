@@ -9,11 +9,11 @@ export interface Base {
     name: string;
     imageUrl: string;
     link: string;
-    createdAt?: string;
-    updatedAt?: string;
     user: {
         name: string;
         avatar?: string;
     };
     clerkUserId?: string;
+    createdAt: string;
+    updatedAt: string;
 }

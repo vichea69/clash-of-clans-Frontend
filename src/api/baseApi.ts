@@ -1,5 +1,5 @@
-import { Base } from '@/types/base';
 import axios from 'axios';
+import { Base } from "@/types/base";
 
 const API_URL = import.meta.env.VITE_API_URL;
 //console.log('API URL from .env:', API_URL);
@@ -48,6 +48,20 @@ interface FetchBasesResponse {
   message: string;
 }
 
+interface ApiBase {
+  id: number;
+  name: string;
+  imageUrl: string;
+  link: string;
+  user?: {
+    name: string;
+    imageUrl: string | null;
+  };
+  clerkUserId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export const fetchBases = async (params: FetchBasesParams = {}): Promise<FetchBasesResponse> => {
   try {
     const response = await baseApi.get("/public-bases", {
@@ -65,13 +79,13 @@ export const fetchBases = async (params: FetchBasesParams = {}): Promise<FetchBa
       const baseURL = getBaseURL();
 
       if (data.data && Array.isArray(data.data)) {
-        const processedBases = data.data.map((base: Base) => ({
+        const processedBases = data.data.map((base: ApiBase) => ({
           ...base,
           imageUrl: processImageUrl(base.imageUrl, baseURL),
-          user: base.user ? {
-            ...base.user,
-            avatar: base.user.avatar || null
-          } : null
+          user: {
+            name: base.user?.name || "Unknown",
+            avatar: base.user?.imageUrl || null
+          }
         }));
 
         return {
