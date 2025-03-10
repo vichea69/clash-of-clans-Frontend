@@ -33,6 +33,21 @@ interface BaseData extends BaseFormData {
   };
 }
 
+const getFullImageUrl = (imageUrl: string) => {
+  if (!imageUrl) return "";
+  if (imageUrl.startsWith("http")) return imageUrl;
+
+  // Get the base URL without the '/api/v1' part
+  const baseUrl = import.meta.env.VITE_API_URL.replace(/\/api\/v1\/?$/, "");
+
+  // Ensure imageUrl starts with 'uploads/'
+  const cleanImageUrl = imageUrl.startsWith("uploads/")
+    ? imageUrl
+    : `uploads/${imageUrl}`;
+
+  return `${baseUrl}/${cleanImageUrl}`;
+};
+
 const BaseUpdate = () => {
   const { baseId } = useParams();
   const navigate = useNavigate();
@@ -59,7 +74,7 @@ const BaseUpdate = () => {
         const baseData = await fetchBaseById(baseId);
         console.log("Fetched base data:", baseData);
 
-        // Update all form data including the image URL
+        // Update form data
         setFormData({
           name: baseData.name || "",
           link: baseData.link || "",
@@ -67,15 +82,16 @@ const BaseUpdate = () => {
           imageUrl: baseData.imageUrl || "",
         });
 
-        // Set image preview from existing image URL
+        // Set image preview
         if (baseData.imageUrl) {
-          setImagePreview(baseData.imageUrl);
-          console.log("Set image preview:", baseData.imageUrl);
+          const fullImageUrl = getFullImageUrl(baseData.imageUrl);
+          setImagePreview(fullImageUrl);
+          console.log("Set image preview:", fullImageUrl);
         }
       } catch (error) {
         console.error("Error fetching base:", error);
         toast.error("Failed to load base data");
-        navigate("/bases");
+        navigate("/dashboard");
       } finally {
         setIsLoadingData(false);
       }
@@ -121,12 +137,6 @@ const BaseUpdate = () => {
     if (formData.image) {
       submitData.append("image", formData.image);
     }
-
-    console.log("Submitting to API:", {
-      name: formData.name,
-      link: formData.link,
-      hasImage: !!formData.image,
-    });
 
     try {
       const success = await updateBase(submitData);
@@ -209,7 +219,9 @@ const BaseUpdate = () => {
                 {(imagePreview || formData.imageUrl) && (
                   <div className="relative aspect-video w-full max-w-sm mx-auto">
                     <img
-                      src={imagePreview || formData.imageUrl}
+                      src={
+                        imagePreview || getFullImageUrl(formData.imageUrl || "")
+                      }
                       alt="Base preview"
                       className="object-contain rounded-lg w-full h-full"
                     />
