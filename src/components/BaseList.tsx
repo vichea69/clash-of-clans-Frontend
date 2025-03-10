@@ -261,7 +261,12 @@ const BaseList = () => {
         });
 
         if (response.data) {
-          setBases(response.data);
+          // Sort by createdAt in descending order
+          const sortedBases = [...response.data].sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+          setBases(sortedBases);
           setHasMore(page < response.totalPages);
         } else {
           setError("Expected data but received a different format");
@@ -291,7 +296,15 @@ const BaseList = () => {
           });
 
           if (response.data) {
-            setBases((prev) => [...prev, ...response.data]);
+            setBases((prev) => {
+              const newBases = [...prev, ...response.data];
+              // Sort all bases by createdAt
+              return newBases.sort(
+                (a, b) =>
+                  new Date(b.createdAt).getTime() -
+                  new Date(a.createdAt).getTime()
+              );
+            });
             setHasMore(nextPage < response.totalPages);
             setPage(nextPage);
           }

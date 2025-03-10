@@ -43,10 +43,19 @@ const Base = () => {
     const loadBases = async () => {
       try {
         setLoading(true);
-        const response = await fetchBases({ page: 1 });
+        const response = await fetchBases({
+          page: 1,
+          sort: "latest", // Ensure latest sort
+          limit: 16,
+        });
 
         if (response.data) {
-          setComponents(response.data);
+          // Sort by createdAt in descending order
+          const sortedBases = [...response.data].sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+          setComponents(sortedBases);
           setHasMore(page < response.totalPages);
         } else {
           setError("Expected data but received a different format");
