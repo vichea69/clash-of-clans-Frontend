@@ -1,3 +1,4 @@
+import { Base } from '@/types/base';
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -64,12 +65,12 @@ export const fetchBases = async (params: FetchBasesParams = {}): Promise<FetchBa
       const baseURL = getBaseURL();
 
       if (data.data && Array.isArray(data.data)) {
-        const processedBases = data.data.map(base => ({
+        const processedBases = data.data.map((base: Base) => ({
           ...base,
           imageUrl: processImageUrl(base.imageUrl, baseURL),
           user: base.user ? {
             ...base.user,
-            avatar: base.user.imageUrl || null
+            avatar: base.user.avatar || null
           } : null
         }));
 
