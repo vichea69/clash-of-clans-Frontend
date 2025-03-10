@@ -7,6 +7,8 @@ import { useUser } from "@clerk/clerk-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 import { useBaseActions } from "@/hooks/useBaseActions";
+import { useInView } from "react-intersection-observer";
+import LoaderOne from "@/components/ui/loader-one";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -30,6 +32,8 @@ interface Base {
     avatar?: string;
   };
   clerkUserId?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Base card component
@@ -58,6 +62,26 @@ const BaseCard = memo(
       if (success && onBaseChange) {
         onBaseChange();
       }
+    };
+
+    // Update formatDate to show "time ago" format
+    const formatDate = (dateString: string) => {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+      if (diffInSeconds < 60) return "just now";
+      if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+      if (diffInSeconds < 86400)
+        return `${Math.floor(diffInSeconds / 3600)}h ago`;
+      if (diffInSeconds < 604800)
+        return `${Math.floor(diffInSeconds / 86400)}d ago`;
+
+      return new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      }).format(date);
     };
 
     return (
@@ -187,6 +211,9 @@ const BaseCard = memo(
                     ? user?.username || user?.firstName || "You"
                     : base.user?.name || "Unknown user"}
                 </span>
+                <span className="text-[10px] sm:text-xs text-muted-foreground">
+                  {formatDate(base.createdAt)}
+                </span>
               </div>
             </div>
           </div>
@@ -217,20 +244,27 @@ const BaseList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const { ref: loadMoreRef, inView } = useInView();
 
+  // Initial data loading
   useEffect(() => {
     const loadBases = async () => {
       try {
         setLoading(true);
-        const basesData = await fetchBases();
+        const response = await fetchBases({
+          page: 1,
+          sort: "latest",
+          limit: 16,
+        });
 
-        if (Array.isArray(basesData)) {
-          setBases(basesData);
+        if (response.data) {
+          setBases(response.data);
+          setHasMore(page < response.totalPages);
         } else {
-          setError(
-            "Expected an array of bases but received a different format"
-          );
-          console.error("Unexpected data format:", basesData);
+          setError("Expected data but received a different format");
         }
       } catch (err) {
         console.error("Error loading bases:", err);
@@ -243,16 +277,47 @@ const BaseList = () => {
     loadBases();
   }, [retryCount]);
 
+  // Load more data when scrolling
+  useEffect(() => {
+    const loadMore = async () => {
+      if (inView && !loadingMore && hasMore) {
+        setLoadingMore(true);
+        try {
+          const nextPage = page + 1;
+          const response = await fetchBases({
+            page: nextPage,
+            sort: "latest",
+            limit: 16,
+          });
+
+          if (response.data) {
+            setBases((prev) => [...prev, ...response.data]);
+            setHasMore(nextPage < response.totalPages);
+            setPage(nextPage);
+          }
+        } catch (err) {
+          console.error("Error loading more bases:", err);
+        } finally {
+          setLoadingMore(false);
+        }
+      }
+    };
+
+    loadMore();
+  }, [inView, loadingMore, hasMore, page]);
+
   const handleRetry = useCallback(() => {
     setRetryCount((count) => count + 1);
+    setPage(1);
+    setHasMore(true);
   }, []);
 
   return (
     <div className="min-h-screen bg-background">
       <main className="container py-4 px-4 sm:px-6 sm:py-6">
-        {loading ? (
+        {loading && bases.length === 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-            {[...Array(4)].map((_, i) => (
+            {[...Array(16)].map((_, i) => (
               <SkeletonCard key={i} />
             ))}
           </div>
@@ -272,11 +337,29 @@ const BaseList = () => {
             <p className="text-muted-foreground">No bases available</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-            {bases.map((base) => (
-              <BaseCard key={base.id} base={base} onBaseChange={handleRetry} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+              {bases.map((base) => (
+                <BaseCard
+                  key={base.id}
+                  base={base}
+                  onBaseChange={() => {
+                    setBases([]);
+                    setPage(1);
+                    setHasMore(true);
+                    handleRetry();
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Infinite scroll loader */}
+            {!loading && !error && hasMore && (
+              <div ref={loadMoreRef} className="flex justify-center py-8">
+                {loadingMore && <LoaderOne />}
+              </div>
+            )}
+          </>
         )}
       </main>
     </div>

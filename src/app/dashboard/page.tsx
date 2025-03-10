@@ -29,6 +29,7 @@ export default function Page() {
     new URLSearchParams(location.search).get("showBaseUpload") === "true"
   );
   const [totalBases, setTotalBases] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const isUploadView =
@@ -39,11 +40,16 @@ export default function Page() {
   useEffect(() => {
     const loadBasesCount = async () => {
       try {
-        const bases = await fetchBases();
-        setTotalBases(Array.isArray(bases) ? bases.length : 0);
+        setLoading(true);
+        const response = await fetchBases({ page: 1, limit: 1 });
+        if (response && response.total) {
+          setTotalBases(response.total);
+        }
       } catch (error) {
         console.error("Error fetching bases count:", error);
         setTotalBases(0);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -87,7 +93,9 @@ export default function Page() {
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem>
-                    <BreadcrumbPage className="text-pink-500">Total Bases: {totalBases}</BreadcrumbPage>
+                    <BreadcrumbPage className="text-pink-500">
+                      {loading ? "Loading..." : `Total Bases: ${totalBases}`}
+                    </BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>

@@ -38,87 +38,61 @@ interface FetchBasesParams {
   sort?: string;
 }
 
-export const fetchBases = async (params: FetchBasesParams = {}) => {
+interface FetchBasesResponse {
+  success: boolean;
+  data: Base[];
+  total: number;
+  page: number;
+  totalPages: number;
+  message: string;
+}
+
+export const fetchBases = async (params: FetchBasesParams = {}): Promise<FetchBasesResponse> => {
   try {
-    // Add query parameters to the request if provided
     const response = await baseApi.get("/public-bases", {
-      params: Object.keys(params).length > 0 ? params : undefined
+      params: {
+        page: params.page || 1,
+        limit: 16,
+        ...params
+      }
     });
+
     const { data } = response;
 
-    //console.log('API Response Data:', data);
-
-    // Extract and sort array data from common response patterns
     if (data && typeof data === 'object') {
-      const possibleArrays = ['data', 'results', 'bases'];
-      let baseArray;
+      // Process the response data
+      const baseURL = getBaseURL();
 
-      // Get the first valid array found in the response
-      for (const key of possibleArrays) {
-        if (data[key] && Array.isArray(data[key])) {
-          console.log(`Found array in response.${key}:`, data[key]);
-          baseArray = data[key];
-          break;
-        }
-      }
+      if (data.data && Array.isArray(data.data)) {
+        const processedBases = data.data.map(base => ({
+          ...base,
+          imageUrl: processImageUrl(base.imageUrl, baseURL),
+          user: base.user ? {
+            ...base.user,
+            avatar: base.user.imageUrl || null
+          } : null
+        }));
 
-      // If no array found in nested properties, check if data itself is an array
-      if (!baseArray && Array.isArray(data)) {
-        console.log('Response data is an array:', data);
-        baseArray = data;
-      }
-
-      // If we found an array, process image URLs and sort by date
-      if (baseArray) {
-        const baseURL = getBaseURL();
-        //console.log('Base URL for images:', baseURL);
-
-        return baseArray.map(base => {
-          // Log the original image URL for debugging
-          //console.log(`Original imageUrl for base ${base.id}:`, base.imageUrl);
-
-          // Construct proper image URL
-          let fullImageUrl = null;
-          if (base.imageUrl) {
-            // If it's already a full URL, use it as is
-            if (base.imageUrl.startsWith('http')) {
-              fullImageUrl = base.imageUrl;
-            }
-            // If it's a relative path starting with 'uploads/', construct the correct URL
-            else if (base.imageUrl.startsWith('uploads/')) {
-              fullImageUrl = `${baseURL}/${base.imageUrl}`;
-            }
-            // Otherwise, assume it needs the base URL and 'uploads/'
-            else {
-              fullImageUrl = `${baseURL}/uploads/${base.imageUrl}`;
-            }
-          }
-
-          //console.log(`Processed imageUrl for base ${base.id}:`, fullImageUrl);
-
-          return {
-            ...base,
-            imageUrl: fullImageUrl,
-            // Ensure user avatar is absolute
-            user: base.user ? {
-              ...base.user,
-              avatar: base.user.imageUrl || null
-            } : null
-          };
-        }).sort((a, b) => {
-          const dateA = new Date(a.createdAt || a.updatedAt || 0);
-          const dateB = new Date(b.createdAt || b.updatedAt || 0);
-          return dateB.getTime() - dateA.getTime(); // Most recent first
-        });
+        return {
+          ...data,
+          data: processedBases
+        };
       }
     }
 
-    console.log('Returning original data:', data);
-    return data;
+    throw new Error('Invalid response format');
   } catch (error) {
     console.error('Error fetching bases:', error);
     throw error;
   }
+};
+
+// Helper function to process image URLs
+const processImageUrl = (imageUrl: string | null, baseURL: string): string | null => {
+  if (!imageUrl) return null;
+  if (imageUrl.startsWith('http')) return imageUrl;
+  if (imageUrl.startsWith('uploads/')) return `${baseURL}/${imageUrl}`;
+  return `${baseURL}/uploads/${imageUrl}`;
 };
 
 export const uploadPublicBase = async (formData: FormData) => {
@@ -207,4 +181,3 @@ export const fetchBaseById = async (baseId: string) => {
 };
 
 export default baseApi;
-
