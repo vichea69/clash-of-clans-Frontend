@@ -107,14 +107,11 @@ export const ComponentCard = memo(({ component }: ComponentCardProps) => {
                 <span className="text-[10px] sm:text-xs text-muted-foreground truncate block">
                   by {userName}
                 </span>
-                <span className="text-[10px] sm:text-xs text-muted-foreground">
-                  {formatDate(component.createdAt)}
-                </span>
               </div>
             </div>
             {component.createdAt && (
               <span className="text-[10px] sm:text-xs text-muted-foreground ml-2">
-                {new Date(component.createdAt).toLocaleDateString()}
+                {formatDate(component.createdAt)}
               </span>
             )}
           </div>

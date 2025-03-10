@@ -183,19 +183,19 @@ const BaseCard = memo(
                 </Avatar.Fallback>
               </Avatar.Root>
               <div className="ml-1.5 sm:ml-2 overflow-hidden flex-1 min-w-0">
-                <span className="font-medium text-xs sm:text-sm md:text-base truncate block">
+                {/* <span className="font-medium text-xs sm:text-sm md:text-base truncate block">
                   {base.name}
-                </span>
+                </span> */}
                 <span className="text-[10px] sm:text-xs text-muted-foreground truncate block">
                   by{" "}
                   {isSignedIn && isCreator
                     ? user?.username || user?.firstName || "You"
                     : base.user?.name || "Unknown user"}
                 </span>
-                <span className="text-[10px] sm:text-xs text-muted-foreground">
-                  {formatDate(base.createdAt)}
-                </span>
               </div>
+              <span className="text-[10px] sm:text-xs text-muted-foreground ml-2">
+                {formatDate(base.createdAt)}
+              </span>
             </div>
           </div>
         </a>
