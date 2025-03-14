@@ -21,6 +21,7 @@ const Header = () => {
   const navigation = [
     { title: "Home", path: "/" },
     { title: "Base Layouts", path: "/base" },
+    { title: "Full Size Base", path: "/base/full-size" },
   ];
 
   // Mobile UserButton click handler to prevent menu from closing

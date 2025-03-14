@@ -9,6 +9,7 @@ import Base from "@/components/Base";
 import NotFound from "@/page/NotFound";
 import Page from "@/app/dashboard/page";
 import BaseUpdate from "@/page/base/BaseUpdate";
+import FullsizeBase from "@/components/FullsizeBase";
 
 // Loading component for fallback
 const LoadingSpinner = () => <div>Loading...</div>;
@@ -31,6 +32,7 @@ const AppRouter = () => {
         <Route index element={<Home />} />
         <Route path="about" element={<About />} />
         <Route path="base" element={<Base />} />
+        <Route path="base/full-size" element={<FullsizeBase />} />
 
         {/* Authentication routes */}
         <Route
