@@ -351,13 +351,7 @@ export default function LeaderboardView() {
                             <div className="flex flex-col">
                               <div className="font-bold text-foreground flex items-center gap-1">
                                 {player.name}
-                                {player.previousRank &&
-                                  player.previousRank !== player.rank &&
-                                  (player.previousRank > player.rank ? (
-                                    <TrendingUp className="h-3 w-3 text-green-500" />
-                                  ) : (
-                                    <TrendingDown className="h-3 w-3 text-red-500" />
-                                  ))}
+                                <span className="text-xs font-medium"></span>
                               </div>
                               <div className="text-muted-foreground text-xs flex items-center gap-1">
                                 {player.clanBadgeUrl && (
@@ -402,12 +396,6 @@ export default function LeaderboardView() {
                               <Shield className="h-3 w-3 text-green-500" />
                               <span>{player.defensesWon}</span>
                             </div>
-                          </div>
-
-                          <div className="bg-primary/10 px-2 py-0.5 rounded-md">
-                            <span className="text-xs font-medium">
-                              Lvl {player.level}
-                            </span>
                           </div>
                         </div>
                       </div>
