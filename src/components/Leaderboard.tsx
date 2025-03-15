@@ -1,15 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Globe,
-  Flag,
-  Trophy,
-  TrendingUp,
-  TrendingDown,
-  Shield,
-  Sword,
-} from "lucide-react";
+import { Globe, Flag, Trophy, Shield, Sword } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
