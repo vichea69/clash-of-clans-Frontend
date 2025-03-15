@@ -22,6 +22,7 @@ const Header = () => {
     { title: "Home", path: "/" },
     { title: "Base Layouts", path: "/base" },
     { title: "Full Size Base", path: "/base/full-size" },
+    { title: "Leaderboard", path: "/leaderboard" },
   ];
 
   // Mobile UserButton click handler to prevent menu from closing

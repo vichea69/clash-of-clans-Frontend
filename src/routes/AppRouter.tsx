@@ -10,7 +10,7 @@ import NotFound from "@/page/NotFound";
 import Page from "@/app/dashboard/page";
 import BaseUpdate from "@/page/base/BaseUpdate";
 import FullsizeBase from "@/components/FullsizeBase";
-
+import Leaderboard from "@/components/Leaderboard";
 // Loading component for fallback
 const LoadingSpinner = () => <div>Loading...</div>;
 
@@ -33,6 +33,7 @@ const AppRouter = () => {
         <Route path="about" element={<About />} />
         <Route path="base" element={<Base />} />
         <Route path="base/full-size" element={<FullsizeBase />} />
+        <Route path="leaderboard" element={<Leaderboard />} />
 
         {/* Authentication routes */}
         <Route
