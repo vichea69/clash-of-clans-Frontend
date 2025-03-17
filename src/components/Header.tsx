@@ -39,13 +39,20 @@ const Header = () => {
             to="/"
             className="flex items-center space-x-2 transition-transform hover:scale-105 active:scale-95"
           >
+            <img
+              src="https://api-assets.clashofclans.com/leagues/288/R2zmhyqQ0_lKcDR5EyghXCxgyC9mm_mVMIjAbmGoZtw.png"
+              alt="Clash of Clans League Logo"
+              className="h-12 w-12"
+            />
+          </Link>
+          <Link
+            to="/"
+            className="flex items-center space-x-2 transition-transform hover:scale-105 active:scale-95"
+          >
             <span className="font-bold bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-pink-500 dark:from-cyan-300 dark:via-fuchsia-400 dark:to-pink-400 bg-clip-text text-transparent animate-gradient-x drop-shadow-sm hover:drop-shadow-md transition-all">
               Clash Of Base
             </span>
           </Link>
-          <span className="hidden sm:inline-block text-xs text-foreground/60 dark:text-foreground/70">
-            Free CoC Base Layouts
-          </span>
         </div>
 
         {/* Desktop Navigation */}
