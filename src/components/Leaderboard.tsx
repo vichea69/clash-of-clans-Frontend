@@ -10,20 +10,6 @@ import { leaderboardAPI } from "@/api/leaderboard.API";
 import { AxiosError } from "axios";
 import { cn } from "@/lib/utils";
 
-interface PreviousSeasonPlayer {
-  name: string;
-  trophies: number;
-}
-
-interface SeasonInfo {
-  name: string;
-  endTime: string;
-  previousSeason: {
-    name: string;
-    topPlayers: PreviousSeasonPlayer[];
-  };
-}
-
 interface FormattedPlayer {
   rank: number;
   previousRank: number;
@@ -42,18 +28,6 @@ export default function LeaderboardView() {
   const [players, setPlayers] = useState<FormattedPlayer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [seasonInfo] = useState<SeasonInfo>({
-    name: "March 2025 Season",
-    endTime: "15d 17h",
-    previousSeason: {
-      name: "February 2025 Season",
-      topPlayers: [
-        { name: "DZ Hawk", trophies: 6184 },
-        { name: "Mammuth", trophies: 6164 },
-        { name: "Judo Sloth", trophies: 6158 },
-      ],
-    },
-  });
 
   useEffect(() => {
     fetchLeaderboardData();
@@ -155,62 +129,6 @@ export default function LeaderboardView() {
           </TabsTrigger>
         </TabsList>
       </Tabs>
-
-      {/* Tournament Banner */}
-      <Card className="bg-gradient-to-br from-purple-600 to-purple-800 dark:from-purple-700 dark:to-purple-900 border-none text-white">
-        <CardContent className="p-4 md:p-6 flex flex-col md:grid md:grid-cols-2 gap-4 md:gap-8">
-          <div className="flex items-center gap-3 md:gap-4">
-            <div className="relative w-16 h-16 md:w-24 md:h-24 flex-shrink-0 bg-purple-800/50 backdrop-blur-sm rounded-lg p-2">
-              <Trophy className="w-full h-full text-purple-200" />
-            </div>
-            <div className="space-y-1">
-              <h2 className="text-lg md:text-xl font-bold">Legend League</h2>
-              <p className="text-sm text-purple-200">{seasonInfo.name}</p>
-              <Badge
-                variant="outline"
-                className="bg-purple-500/20 text-purple-100 border-purple-400 mt-1"
-              >
-                Ends in: {seasonInfo.endTime}
-              </Badge>
-            </div>
-          </div>
-
-          <div>
-            <h3 className="text-sm uppercase tracking-wider mb-3 text-purple-200">
-              Previous: {seasonInfo.previousSeason.name}
-            </h3>
-            <div className="space-y-2 bg-purple-500/20 backdrop-blur-sm rounded-lg p-3">
-              {seasonInfo.previousSeason.topPlayers.map((player, index) => (
-                <div
-                  key={index}
-                  className="flex justify-between items-center text-sm"
-                >
-                  <span className="flex items-center gap-2">
-                    <Badge
-                      variant="outline"
-                      className={cn(
-                        "w-5 h-5 flex items-center justify-center p-0",
-                        index === 0
-                          ? "bg-yellow-500/50"
-                          : index === 1
-                          ? "bg-slate-400/50"
-                          : "bg-amber-600/50"
-                      )}
-                    >
-                      {index + 1}
-                    </Badge>
-                    {player.name}
-                  </span>
-                  <span className="flex items-center gap-1 font-medium">
-                    {player.trophies}
-                    <Trophy className="w-3 h-3 text-yellow-300" />
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Player Rankings */}
       <Card>
