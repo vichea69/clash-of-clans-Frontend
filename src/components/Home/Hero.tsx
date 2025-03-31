@@ -126,9 +126,22 @@ const Hero = () => {
                     isRefreshing ? styles.refreshPulse : ""
                   }`}
                 >
-                  <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient-x">
-                    Clash Of Clans
-                  </span>
+                  <img
+                    src="https://store.supercell.com/_next/static/media/logo.985ee45d.png"
+                    alt="Clash Of Clans"
+                    className="h-30 sm:h-38 md:h-46 lg:h-44 w-auto max-w-full object-contain transition-all duration-300 drop-shadow-lg hover:drop-shadow-xl filter brightness-110 contrast-105 transform hover:scale-102"
+                    loading="eager"
+                    width={450}
+                    height={220}
+                    style={{
+                      objectPosition: "center",
+                      imageRendering: "crisp-edges",
+                    }}
+                    onError={(e) => {
+                      e.currentTarget.src = "/fallback-logo.png";
+                      e.currentTarget.onerror = null;
+                    }}
+                  />
                 </h1>
               </div>
             </motion.div>
