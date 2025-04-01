@@ -23,6 +23,16 @@ const Header = () => {
     { title: "Base Layouts", path: "/base" },
     { title: "Full Size Base", path: "/base/full-size" },
     { title: "Leaderboard", path: "/leaderboard" },
+    ...(isSignedIn
+      ? [
+          { title: "Dashboard", path: "/dashboard" },
+          {
+            title: "Upload Base",
+            path: "/dashboard?showBaseUpload=true",
+            isNew: true,
+          },
+        ]
+      : []),
   ];
 
   // Mobile UserButton click handler to prevent menu from closing
@@ -55,34 +65,57 @@ const Header = () => {
           </Link>
         </div>
 
+        {/* Tablet Navigation - Only show specific items */}
+        <div className="hidden md:flex lg:hidden items-center justify-center">
+          <nav className="flex items-center space-x-4 text-sm font-medium">
+            <Link
+              to="/"
+              className="transition-all whitespace-nowrap text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white hover:scale-105 active:scale-95"
+            >
+              Home
+            </Link>
+            <Link
+              to="/base"
+              className="transition-all whitespace-nowrap text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white hover:scale-105 active:scale-95"
+            >
+              Base Layouts
+            </Link>
+            <Link
+              to="/base/full-size"
+              className="transition-all whitespace-nowrap text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white hover:scale-105 active:scale-95"
+            >
+              Full Size Base
+            </Link>
+          </nav>
+        </div>
+
         {/* Desktop Navigation */}
-        <div className="hidden md:flex flex-1 items-center justify-center">
+        <div className="hidden lg:flex flex-1 items-center justify-center">
           <nav className="flex items-center space-x-6 text-sm font-medium">
             {navigation.map((item, idx) => (
               <Link
                 key={idx}
                 to={item.path}
-                className="transition-all hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90 hover:scale-105 active:scale-95 relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-blue-400 after:via-purple-400 after:to-pink-400 after:transition-all hover:after:w-full"
+                className={`transition-all hover:scale-105 active:scale-95 relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:transition-all hover:after:w-full ${
+                  item.path.includes("showBaseUpload=true")
+                    ? "text-pink-500 hover:text-pink-600 dark:text-pink-400 dark:hover:text-pink-300 after:bg-pink-500 dark:after:bg-pink-400"
+                    : "text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white after:bg-gray-900 dark:after:bg-white"
+                }`}
               >
                 {item.title}
+                {item.isNew && (
+                  <span
+                    className={`ml-2 px-2 py-0.5 text-xs rounded-full animate-pulse ring-1 ${
+                      item.path.includes("showBaseUpload=true")
+                        ? "bg-pink-50 dark:bg-pink-900/20 text-pink-500 dark:text-pink-400 ring-pink-200 dark:ring-pink-800"
+                        : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 ring-gray-200 dark:ring-gray-700"
+                    }`}
+                  >
+                    New
+                  </span>
+                )}
               </Link>
             ))}
-            {isSignedIn && (
-              <>
-                <Link
-                  to="/dashboard"
-                  className="transition-all hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90 hover:scale-105 active:scale-95 relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-blue-400 after:via-purple-400 after:to-pink-400 after:transition-all hover:after:w-full"
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  to="/dashboard?showBaseUpload=true"
-                  className="transition-all hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90 hover:scale-105 active:scale-95 relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-blue-400 after:via-purple-400 after:to-pink-400 after:transition-all hover:after:w-full"
-                >
-                  Upload Base
-                </Link>
-              </>
-            )}
           </nav>
         </div>
 
@@ -127,7 +160,7 @@ const Header = () => {
           </DropdownMenu>
 
           {/* Desktop Only Items */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden lg:flex items-center space-x-4">
             <Link
               to="https://github.com/vichea69"
               target="_blank"
@@ -167,10 +200,10 @@ const Header = () => {
             </div>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Menu Button for Mobile and Tablet */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden inline-flex items-center justify-center rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring hover:bg-accent hover:text-accent-foreground h-9 py-2 w-9 px-0 dark:hover:bg-accent/40 dark:text-foreground/80 dark:hover:text-foreground hover:scale-110 active:scale-95"
+            className="lg:hidden inline-flex items-center justify-center rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring hover:bg-accent hover:text-accent-foreground h-9 py-2 w-9 px-0 dark:hover:bg-accent/40 dark:text-foreground/80 dark:hover:text-foreground hover:scale-110 active:scale-95"
           >
             {isMenuOpen ? (
               <X className="h-5 w-5 animate-in fade-in zoom-in duration-200" />
@@ -181,65 +214,56 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Responsive Menu for Mobile and Tablet */}
       {isMenuOpen && (
-        <div className="md:hidden backdrop-blur-md bg-background/10 animate-in slide-in-from-top duration-300">
+        <div className="lg:hidden backdrop-blur-md bg-background/10 animate-in slide-in-from-top duration-300">
           <div className="container py-4">
             <nav className="flex flex-col space-y-4">
               {navigation.map((item, idx) => (
                 <Link
                   key={idx}
                   to={item.path}
-                  className="text-sm font-medium transition-all hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90 hover:translate-x-1 active:scale-98"
+                  className={`text-sm font-medium transition-all hover:translate-x-1 active:scale-98 flex items-center ${
+                    item.path.includes("showBaseUpload=true")
+                      ? "text-pink-500 hover:text-pink-600 dark:text-pink-400 dark:hover:text-pink-300"
+                      : "text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                  }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.title}
-                </Link>
-              ))}
-
-              {/* Add Dashboard and Upload Base links in mobile menu when signed in */}
-              {isSignedIn && (
-                <>
-                  <Link
-                    to="/dashboard"
-                    className="text-sm font-medium transition-all hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90 hover:translate-x-1 active:scale-98"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Dashboard
-                  </Link>
-                  <Link
-                    to="/dashboard?showBaseUpload=true"
-                    className="text-sm font-medium transition-all hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90 flex items-center hover:translate-x-1 active:scale-98"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <span className="text-pink-400">Upload Base</span>
-                    <span className="ml-2 px-2 py-0.5 text-xs bg-primary/10 text-primary rounded-full animate-pulse">
+                  {item.isNew && (
+                    <span
+                      className={`ml-2 px-2 py-0.5 text-xs rounded-full animate-pulse ring-1 ${
+                        item.path.includes("showBaseUpload=true")
+                          ? "bg-pink-50 dark:bg-pink-900/20 text-pink-500 dark:text-pink-400 ring-pink-200 dark:ring-pink-800"
+                          : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 ring-gray-200 dark:ring-gray-700"
+                      }`}
+                    >
                       New
                     </span>
-                  </Link>
-                </>
-              )}
+                  )}
+                </Link>
+              ))}
 
               <div className="flex flex-col space-y-3 pt-4 border-t border-border/40 dark:border-border/30">
                 <Link
                   to="https://github.com/vichea69"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center space-x-2 text-sm font-medium transition-all hover:text-foreground/80 text-foreground/60 dark:text-foreground/70 dark:hover:text-foreground/90 hover:translate-x-1 active:scale-98"
+                  className="inline-flex items-center space-x-2 text-sm font-medium transition-all text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white hover:translate-x-1 active:scale-98"
                 >
                   <Github className="h-5 w-5" />
                   <span>GitHub</span>
                 </Link>
 
-                {/* Improved mobile auth section */}
+                {/* Auth Section */}
                 {isSignedIn ? (
                   <div className="mt-4 pt-4 border-t border-border/40 dark:border-border/30">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-medium">
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                         Hello, {user?.firstName || "User"}
                       </span>
-                      {/* Enhanced UserButton for mobile */}
-                      <div className="z-[999]" onClick={handleUserButtonClick}>
+                      <div onClick={handleUserButtonClick}>
                         <UserButton
                           afterSignOutUrl="/"
                           appearance={{
