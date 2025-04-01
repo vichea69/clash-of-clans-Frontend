@@ -129,7 +129,7 @@ const Hero = () => {
                   <img
                     src="https://store.supercell.com/_next/static/media/logo.985ee45d.png"
                     alt="Clash Of Clans"
-                    className="h-30 sm:h-30 md:h-32 lg:h-40 w-auto object-contain transition-all duration-300 drop-shadow-md hover:drop-shadow-xl transform hover:scale-105"
+                    className="h-30 sm:h-30 md:h-48 lg:h-52 xl:h-56 w-auto object-contain transition-all duration-300 drop-shadow-md hover:drop-shadow-xl transform hover:scale-105"
                     loading="eager"
                     width={400}
                     height={200}
