@@ -1,11 +1,11 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { fetchBases } from "@/api/baseApi";
-import { useAuth } from "@clerk/clerk-react";
+//import { useAuth } from "@clerk/clerk-react";
 import { useInView } from "react-intersection-observer";
 
 // Import our component parts
-import { Header } from "./base/Header";
-import { UserBanner } from "./base/UserBanner";
+// import { Header } from "./base/Header";
+//import { UserBanner } from "./base/UserBanner";
 import { ComponentGrid } from "./base/ComponentGrid";
 import { BackToTopButton } from "./base/BackToTopButton";
 import { Base as BaseType } from "@/types/base"; // Assuming you move the interface to a types file
@@ -21,14 +21,14 @@ export const SORT_OPTIONS = [
 
 const Base = () => {
   // State management
-  const { isSignedIn } = useAuth();
+  //const { isSignedIn } = useAuth();
   const [components, setComponents] = useState<BaseType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const [activeSort, setActiveSort] = useState(SORT_OPTIONS[0]);
+  // const [activeSort, setActiveSort] = useState(SORT_OPTIONS[0]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -140,18 +140,18 @@ const Base = () => {
   }, [mobileMenuOpen]);
 
   // Event handlers
-  const toggleMobileMenu = useCallback(() => {
-    setMobileMenuOpen((prev) => !prev);
-  }, []);
+  // const toggleMobileMenu = useCallback(() => {
+  //   setMobileMenuOpen((prev) => !prev);
+  // }, []);
 
-  const closeMobileMenu = useCallback(() => {
-    setMobileMenuOpen(false);
-  }, []);
+  // const closeMobileMenu = useCallback(() => {
+  //   setMobileMenuOpen(false);
+  // }, []);
 
-  const handleSortChange = useCallback((option: (typeof SORT_OPTIONS)[0]) => {
-    setActiveSort(option);
-    // Here you would typically re-fetch or sort your data
-  }, []);
+  // const handleSortChange = useCallback((option: (typeof SORT_OPTIONS)[0]) => {
+  //   setActiveSort(option);
+  //   // Here you would typically re-fetch or sort your data
+  // }, []);
 
   const handleRetry = useCallback(() => {
     setRetryCount((count) => count + 1);
@@ -160,14 +160,14 @@ const Base = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header Component */}
-      <Header
+      {/* <Header
         ref={headerRef}
         mobileMenuOpen={mobileMenuOpen}
         toggleMobileMenu={toggleMobileMenu}
         closeMobileMenu={closeMobileMenu}
         activeSort={activeSort}
         handleSortChange={handleSortChange}
-      />
+      /> */}
 
       {/* Main Content */}
       <main
@@ -177,7 +177,7 @@ const Base = () => {
         }`}
       >
         {/* User Banner Component */}
-        <UserBanner isSignedIn={isSignedIn} />
+        {/* <UserBanner isSignedIn={isSignedIn} /> */}
 
         {/* Component Grid */}
         <ComponentGrid
