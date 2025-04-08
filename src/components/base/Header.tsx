@@ -1,14 +1,13 @@
 import { forwardRef } from "react";
-import { ChevronDown, Menu, X } from "lucide-react";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { SORT_OPTIONS } from "../Base";
+import { Menu, X } from "lucide-react";
+import { MonthFilter } from "./MonthFilter";
 
 interface HeaderProps {
   mobileMenuOpen: boolean;
   toggleMobileMenu: () => void;
   closeMobileMenu: () => void;
-  activeSort: (typeof SORT_OPTIONS)[0];
-  handleSortChange: (option: (typeof SORT_OPTIONS)[0]) => void;
+  activeMonth: string | null;
+  onMonthChange: (monthYear: string | null) => void;
 }
 
 export const Header = forwardRef<HTMLDivElement, HeaderProps>(
@@ -17,18 +16,15 @@ export const Header = forwardRef<HTMLDivElement, HeaderProps>(
       mobileMenuOpen,
       toggleMobileMenu,
       closeMobileMenu,
-      activeSort,
-      handleSortChange,
+      activeMonth,
+      onMonthChange,
     },
     ref
   ) => {
     // Navigation links data
     const navLinks = [
-      { href: "#", label: "Components" },
-      { href: "#", label: "Templates" },
-      { href: "#", label: "Categories" },
-      { href: "#", label: "Design Engineers" },
-      { href: "#", label: "Pro" },
+      { href: "#", label: "❤️" },
+      
     ];
 
     return (
@@ -84,43 +80,13 @@ export const Header = forwardRef<HTMLDivElement, HeaderProps>(
             </div>
           )}
 
-          {/* Sort dropdown */}
-          <div className="ml-auto">
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger asChild>
-                <button
-                  className="flex items-center gap-2 px-3 sm:px-4 py-2.5
-                  text-sm font-medium transition-colors 
-                  hover:bg-accent hover:text-accent-foreground 
-                  active:bg-accent/80
-                  rounded-md"
-                >
-                  {activeSort.label}
-                  <ChevronDown className="h-4 w-4" />
-                </button>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Portal>
-                <DropdownMenu.Content
-                  className="z-50 min-w-[8rem] overflow-hidden rounded-md 
-                  border bg-popover p-1 text-popover-foreground shadow-md"
-                  sideOffset={4}
-                  align="end"
-                >
-                  {SORT_OPTIONS.map((option) => (
-                    <DropdownMenu.Item
-                      key={option.id}
-                      className="relative flex cursor-default select-none 
-                        items-center rounded-sm px-4 py-3.5 text-sm outline-none 
-                        transition-colors hover:bg-accent hover:text-accent-foreground
-                        active:bg-accent/80"
-                      onClick={() => handleSortChange(option)}
-                    >
-                      {option.label}
-                    </DropdownMenu.Item>
-                  ))}
-                </DropdownMenu.Content>
-              </DropdownMenu.Portal>
-            </DropdownMenu.Root>
+          {/* Filters section */}
+          <div className="ml-auto flex items-center">
+            {/* Month filter */}
+            <MonthFilter
+              activeMonth={activeMonth}
+              onMonthChange={onMonthChange}
+            />
           </div>
         </div>
       </header>

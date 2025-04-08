@@ -37,6 +37,7 @@ interface FetchBasesParams {
   page?: number;
   limit?: number;
   sort?: string;
+  month?: string; // Format: YYYY-MM
 }
 
 interface FetchBasesResponse {
@@ -67,7 +68,7 @@ export const fetchBases = async (params: FetchBasesParams = {}): Promise<FetchBa
     const response = await baseApi.get("/public-bases", {
       params: {
         page: params.page || 1,
-        limit: 16,
+        limit: 50,
         ...params
       }
     });
@@ -192,6 +193,31 @@ export const fetchBaseById = async (baseId: string) => {
       throw new Error(error.response.data.message || "Failed to fetch base");
     }
     throw new Error("Failed to fetch base");
+  }
+};
+
+interface MonthlyBaseCount {
+  monthYear: string;
+  count: number;
+  displayName: string;
+}
+
+interface FetchBasesByMonthsResponse {
+  success: boolean;
+  data: MonthlyBaseCount[];
+  message: string;
+}
+
+export const fetchBasesByMonths = async (): Promise<FetchBasesByMonthsResponse> => {
+  try {
+    const response = await baseApi.get("/public-bases/months");
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching bases by months:', error);
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Failed to fetch bases by months");
+    }
+    throw new Error("Failed to fetch bases by months");
   }
 };
 
