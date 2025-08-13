@@ -3,6 +3,7 @@ import { ThemeProvider } from "./components/theme-provider";
 import AppRouter from "./routes/AppRouter";
 import "./App.css";
 import { Toaster } from "sonner";
+import {Analytics} from "@vercel/analytics/react";
 
 const App = () => {
   return (
@@ -11,6 +12,7 @@ const App = () => {
         <AppRouter />
       </BrowserRouter>
       <Toaster position="top-right" />
+        <Analytics/>
     </ThemeProvider>
   );
 };
