@@ -1,0 +1,15 @@
+services:
+  frontend:
+    container_name: coc_frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+        VITE_CLERK_PUBLISHABLE_KEY: ${VITE_CLERK_PUBLISHABLE_KEY}
+        VITE_COC_API_TOKEN: ${VITE_COC_API_TOKEN:-}
+    environment:
+      PORT: 5173
+    ports:
+      - "${APP_PORT:-5173}:5173"
+    restart: unless-stopped

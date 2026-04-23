@@ -48,3 +48,25 @@ export default tseslint.config({
   },
 })
 ```
+
+## Docker Production
+
+Build and run the React app on port `5173`:
+
+```bash
+docker compose up --build -d
+```
+
+Open the app at:
+
+```text
+http://localhost:5173
+```
+
+Notes:
+
+- `docker-compose.yml` reads values from your local `.env` file.
+- Your server Nginx can reverse proxy to `http://127.0.0.1:5173`.
+- The container serves the built React files with a small Node server.
+- Only use `VITE_*` variables for values that are safe to expose in the browser.
+- Use [nginx.conf](/Users/mr.vichea/WebstormProjects/coc_frontend/nginx.conf:1) as a simple example for your server Nginx config.
