@@ -11,5 +11,5 @@ services:
     environment:
       PORT: 5173
     ports:
-      - "${APP_PORT:-5173}:5173"
+      - "127.0.0.1:${APP_PORT:-5173}:5173"
     restart: unless-stopped
